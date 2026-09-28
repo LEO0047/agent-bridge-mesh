@@ -9,8 +9,50 @@ import { qualityGate } from './consensus/quality-gate.js';
 import { schemas } from './tools.js';
 import { z } from 'zod';
 import { Worktrees, git, assertIntegratedSnapshot } from './tasks/worktrees.js';
-import { runTests } from './tasks/test-runner.js';
+import { runTests, type TestProcessRegistry, type TestRunOutcome } from './tasks/test-runner.js';
 import { workspacePath } from './policy/permissions.js';
+// Test children are detached, so their identity is kept in its own record kind: mixing them
+// into agent runs would corrupt the retry and fallback decisions that read the last run.
+export class TestRuns implements TestProcessRegistry {
+  constructor(
+    private db: Store,
+    private collaboration_id: string,
+  ) {}
+  started(info: { pid: number; identity: string | null; command: string[]; cwd: string }) {
+    const v = {
+      id: id('testrun'),
+      collaboration_id: this.collaboration_id,
+      pid: info.pid,
+      process_identity: info.identity,
+      command: info.command,
+      cwd: info.cwd,
+      status: 'running',
+      started_at: now(),
+      ended_at: null,
+      exit_code: null,
+      signal: null,
+      error: null,
+    };
+    this.db.put('test_runs', v);
+    return v.id;
+  }
+  finished(
+    handle: string,
+    status: TestRunOutcome,
+    detail: { exit_code: number | null; signal: string | null; error?: string },
+  ) {
+    const v = this.db.get('test_runs', handle);
+    if (!v) return;
+    this.db.put('test_runs', {
+      ...v,
+      status,
+      exit_code: detail.exit_code,
+      signal: detail.signal,
+      error: detail.error ?? null,
+      ended_at: now(),
+    });
+  }
+}
 export class Service {
   runSignals = new Map<string, AbortSignal>();
   artifacts: Artifacts;
@@ -436,6 +478,7 @@ export class Service {
           ['review', 'integrity'].includes(collab.phase) ? w.paths.integration : w.paths[actor],
           collab.test_command,
           ctx.run_id ? this.runSignals.get(ctx.run_id) : undefined,
+          new TestRuns(this.db, c),
         );
         this.db.event(c, 'code.test', { agent: actor, ...r });
         return r;

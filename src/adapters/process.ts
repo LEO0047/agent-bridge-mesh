@@ -1,11 +1,15 @@
 import { spawnSync, type ChildProcess } from 'node:child_process';
 
+// Identity must rely only on birth attributes the process cannot change about itself.
+// comm is unusable: a launcher such as sandbox-exec replaces its image with the target
+// executable, so the value read just after spawn may not be the value read at recovery.
 export function processIdentity(pid: number) {
-  const result = spawnSync('ps', ['-p', String(pid), '-o', 'lstart=', '-o', 'comm='], {
+  const result = spawnSync('ps', ['-p', String(pid), '-o', 'lstart=', '-o', 'uid='], {
     encoding: 'utf8',
     timeout: 2000,
   });
-  return result.status === 0 ? result.stdout.trim() : null;
+  const identity = result.stdout?.trim().replace(/\s+/g, ' ');
+  return result.status === 0 && identity ? identity : null;
 }
 
 export function killGroup(child: ChildProcess, signal: NodeJS.Signals) {
@@ -23,6 +27,6 @@ export function recoverOrphan(pid: number, identity: string) {
   try {
     process.kill(-pid, 'SIGKILL');
   } catch {
-    // The child may already have exited with its parent.
+    // The process group may already be gone.
   }
 }
