@@ -1,0 +1,62 @@
+[
+  {
+    "check": "Node",
+    "status": "PASS",
+    "detail": "v26.8.0-alpha.0.0.0"
+  },
+  {
+    "check": "Git",
+    "status": "PASS",
+    "detail": "git version 2.54.0 (Apple Git-157)"
+  },
+  {
+    "check": "Codex",
+    "status": "PASS",
+    "detail": "codex-cli 0.158.0-alpha.2.1"
+  },
+  {
+    "check": "Claude",
+    "status": "PASS",
+    "detail": "2.1.275 (Claude Code)"
+  },
+  {
+    "check": "Codex authentication",
+    "status": "PASS",
+    "detail": "Logged in using ChatGPT"
+  },
+  {
+    "check": "Claude authentication",
+    "status": "PASS",
+    "detail": "Logged in (identity omitted)"
+  },
+  {
+    "check": "SQLite/database",
+    "status": "PASS",
+    "detail": "ok"
+  },
+  {
+    "check": "workspace permissions",
+    "status": "PASS",
+    "detail": "Writable"
+  },
+  {
+    "check": "config",
+    "status": "PASS",
+    "detail": "Validated strict configuration"
+  },
+  {
+    "check": "codex MCP registration",
+    "status": "PASS",
+    "detail": "agent-bridge registered"
+  },
+  {
+    "check": "claude MCP registration",
+    "status": "PASS",
+    "detail": "agent-bridge registered"
+  },
+  {
+    "check": "runtime",
+    "status": "PASS",
+    "detail": "Bridge daemon ready"
+  }
+]

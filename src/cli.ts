@@ -106,13 +106,14 @@ async function install() {
     throw Error('Existing unrelated agent-bridge launcher preserved');
   writeFileSync(launcher, body, { mode: 0o755 });
   for (const base of [join(homedir(), '.codex', 'skills'), join(homedir(), '.claude', 'skills')]) {
+    const initiator = base.includes('.claude') ? 'claude' : 'codex';
     const folder = join(base, 'agent-bridge');
     mkdirSync(folder, { recursive: true });
     const dest = join(folder, 'SKILL.md');
     if (existsSync(dest)) copyFileSync(dest, dest + '.backup');
     writeFileSync(
       dest,
-      `---\nname: agent-bridge\ndescription: Use when the user asks Codex and Claude to collaborate, 雙 Agent 協作, 跟 Claude 一起, or 跟 Codex 一起.\n---\nStart the local bridge with \`${launcher} start\`. Use the agent-bridge MCP collaboration_start with the user goal and your agent name as initiator. Do not start nested collaboration from a Bridge-managed session. Poll collaboration_status until completed, degraded, or cancelled. Both agents retain sessions and share draft.md. Deliver only final.md when status completed; report degraded honestly and provide best-effort.md otherwise. Never claim dual approval without the quality gate. CLI fallback: \`${launcher} new --initiator codex --goal '...'\`, status: \`${launcher} collaboration <id>\`.\n`,
+      `---\nname: agent-bridge\ndescription: Use when the user asks Codex and Claude to collaborate, 雙 Agent 協作, 跟 Claude 一起, or 跟 Codex 一起.\n---\nStart the local bridge with \`${launcher} start\`. Use the agent-bridge MCP collaboration_start with the user goal and your agent name as initiator. Do not start nested collaboration from a Bridge-managed session. Poll collaboration_status until completed, degraded, or cancelled. Both agents retain sessions and share draft.md. Deliver only final.md when status completed; report degraded honestly and provide best-effort.md otherwise. Never claim dual approval without the quality gate. CLI fallback: \`${launcher} new --initiator ${initiator} --goal '...'\`, status: \`${launcher} collaboration <id>\`.\n`,
     );
   }
   return await doctor(config);

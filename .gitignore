@@ -4,4 +4,5 @@
 /logs/
 /artifacts/
 /.worktrees/
+/.bridge-tmp/
 *.sqlite*

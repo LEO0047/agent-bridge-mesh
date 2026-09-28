@@ -186,10 +186,12 @@ test('separate worktrees, merge conflict detection and sandboxed coding test', a
   assert.notEqual(work.paths.codex, work.paths.claude);
   const result = await runTests(work.paths.codex);
   assert.equal(result.passed, true, JSON.stringify(result));
+  writeFileSync(join(work.paths.codex, '.bridge-tmp', 'test-output.txt'), 'temporary output');
   w.write(work, 'codex', 'index.js', 'export const value=2;\n');
   w.write(work, 'claude', 'index.js', 'export const value=3;\n');
   const merged = w.integrate(work);
   assert.equal(merged.ok, false);
   assert.deepEqual(merged.conflicts, ['index.js']);
+  assert.equal(git(work.paths.codex, ['ls-files', '.bridge-tmp']), '');
   assert.equal(readFileSync(join(repo, 'index.js'), 'utf8'), 'export const value=1;\n');
 });

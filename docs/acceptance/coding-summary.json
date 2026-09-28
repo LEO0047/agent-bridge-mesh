@@ -1,0 +1,114 @@
+{
+  "label": "coding",
+  "collaboration_id": "collab_00edeab6-b06d-4ef4-b190-393333dad499",
+  "status": "completed",
+  "initiator": "claude",
+  "final_version": 7,
+  "final_sha256": "9c2ddc51ef3f6554953568e94a30304b528d161c8bedbda04f5b4cd620416bbb",
+  "public_copy_sha256": "9c2ddc51ef3f6554953568e94a30304b528d161c8bedbda04f5b4cd620416bbb",
+  "session_fingerprints": [
+    {
+      "agent": "claude",
+      "sha256": "96a0387d2eebc6a7f17c7706cfcfe30f6c80fa23211da8e88bc0400baeecb3b6"
+    },
+    {
+      "agent": "codex",
+      "sha256": "68da70ef336b3d7c4d2af25e44093872f81016055858bd15d4ffdea60a909faa"
+    }
+  ],
+  "session_reuse": [
+    {
+      "agent": "claude",
+      "distinct_resumed_ids": 1
+    },
+    {
+      "agent": "codex",
+      "distinct_resumed_ids": 1
+    }
+  ],
+  "models": [
+    "claude-opus-5[1m]",
+    "gpt-6-astra"
+  ],
+  "total_agent_runs": 24,
+  "messages": 28,
+  "directions": {
+    "codex_to_claude": 13,
+    "claude_to_codex": 15
+  },
+  "draft_authors": [
+    "claude",
+    "codex"
+  ],
+  "draft_versions": 7,
+  "review_verdicts": [
+    {
+      "agent": "claude",
+      "version": 4,
+      "verdict": "REVISE",
+      "artifact_sha256": "4b7e1f02fb6763095b2850dde8c62a09f7157576bd407c430dd8c4b25ea54694",
+      "code_sha256": "0c1803748bd4c7336317006a65a51deed672149c"
+    },
+    {
+      "agent": "codex",
+      "version": 4,
+      "verdict": "REVISE",
+      "artifact_sha256": "4b7e1f02fb6763095b2850dde8c62a09f7157576bd407c430dd8c4b25ea54694",
+      "code_sha256": "0c1803748bd4c7336317006a65a51deed672149c"
+    },
+    {
+      "agent": "claude",
+      "version": 5,
+      "verdict": "APPROVE",
+      "artifact_sha256": "49e1513ba51ca4850d5073f42dcdd0deebf97c64358944cd9ea6c3d4c48b976a",
+      "code_sha256": "0c1803748bd4c7336317006a65a51deed672149c"
+    },
+    {
+      "agent": "codex",
+      "version": 5,
+      "verdict": "REVISE",
+      "artifact_sha256": "49e1513ba51ca4850d5073f42dcdd0deebf97c64358944cd9ea6c3d4c48b976a",
+      "code_sha256": "0c1803748bd4c7336317006a65a51deed672149c"
+    },
+    {
+      "agent": "claude",
+      "version": 7,
+      "verdict": "APPROVE",
+      "artifact_sha256": "9c2ddc51ef3f6554953568e94a30304b528d161c8bedbda04f5b4cd620416bbb",
+      "code_sha256": "0c1803748bd4c7336317006a65a51deed672149c"
+    },
+    {
+      "agent": "codex",
+      "version": 7,
+      "verdict": "APPROVE",
+      "artifact_sha256": "9c2ddc51ef3f6554953568e94a30304b528d161c8bedbda04f5b4cd620416bbb",
+      "code_sha256": "0c1803748bd4c7336317006a65a51deed672149c"
+    }
+  ],
+  "evidence": [
+    {
+      "id": "evidence_fe75995d-e0d3-4e65-a84e-6cca42b648e1",
+      "source": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/max",
+      "retrieved_by": "claude",
+      "verified_by": "codex"
+    },
+    {
+      "id": "evidence_b91372fd-0a49-4ce7-9d3e-900c90daf4d1",
+      "source": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/min",
+      "retrieved_by": "claude",
+      "verified_by": "codex"
+    }
+  ],
+  "disagreements": [
+    {
+      "id": "disagreement_83eea66d-887b-4e66-aca7-fd8fb43c01c3",
+      "status": "merged",
+      "topic": "回歸測試可支持的結論範圍"
+    }
+  ],
+  "code_test": {
+    "passed": true,
+    "exit_code": 0
+  },
+  "integrated_sha": "0c1803748bd4c7336317006a65a51deed672149c"
+}

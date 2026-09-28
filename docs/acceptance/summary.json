@@ -1,0 +1,741 @@
+[
+  {
+    "label": "versioning",
+    "collaboration_id": "collab_570e751f-6f02-41e0-acd3-6d9a45a519cb",
+    "status": "completed",
+    "initiator": "codex",
+    "final_version": 2,
+    "final_sha256": "acdc6da4639d31ded5d4c1c744ab670baa683f1ea24f5abb43498313f709c2d7",
+    "public_copy_sha256": "acdc6da4639d31ded5d4c1c744ab670baa683f1ea24f5abb43498313f709c2d7",
+    "session_fingerprints": [
+      {
+        "agent": "codex",
+        "sha256": "6ea6e20b8abd400efe65af48e3d1b0f958db660a311958f715fe3d7ff7b75062"
+      },
+      {
+        "agent": "claude",
+        "sha256": "53cbc4a9d17fecdce26e7d41bb33c13df923fdacd6d6c58afab98bb863d99593"
+      }
+    ],
+    "session_reuse": [
+      {
+        "agent": "codex",
+        "distinct_resumed_ids": 1
+      },
+      {
+        "agent": "claude",
+        "distinct_resumed_ids": 1
+      }
+    ],
+    "models": [
+      "claude-opus-5[1m]"
+    ],
+    "total_agent_runs": 22,
+    "messages": 16,
+    "directions": {
+      "codex_to_claude": 9,
+      "claude_to_codex": 7
+    },
+    "draft_authors": [
+      "codex",
+      "claude"
+    ],
+    "draft_versions": 2,
+    "review_verdicts": [
+      {
+        "agent": "codex",
+        "version": 2,
+        "verdict": "APPROVE",
+        "artifact_sha256": "acdc6da4639d31ded5d4c1c744ab670baa683f1ea24f5abb43498313f709c2d7",
+        "code_sha256": null
+      },
+      {
+        "agent": "claude",
+        "version": 2,
+        "verdict": "APPROVE",
+        "artifact_sha256": "acdc6da4639d31ded5d4c1c744ab670baa683f1ea24f5abb43498313f709c2d7",
+        "code_sha256": null
+      },
+      {
+        "agent": "codex",
+        "version": 2,
+        "verdict": "APPROVE",
+        "artifact_sha256": "acdc6da4639d31ded5d4c1c744ab670baa683f1ea24f5abb43498313f709c2d7",
+        "code_sha256": null
+      },
+      {
+        "agent": "claude",
+        "version": 2,
+        "verdict": "APPROVE",
+        "artifact_sha256": "acdc6da4639d31ded5d4c1c744ab670baa683f1ea24f5abb43498313f709c2d7",
+        "code_sha256": null
+      }
+    ],
+    "evidence": [],
+    "disagreements": [],
+    "code_test": null,
+    "integrated_sha": null
+  },
+  {
+    "label": "memory",
+    "collaboration_id": "collab_781cfc3c-7f7e-4cdd-a02e-7970b7835ac6",
+    "status": "completed",
+    "initiator": "codex",
+    "final_version": 8,
+    "final_sha256": "5802c5cc9000af81994b2f9c02095630eda5f416f7e5ef15b3ab22eeb0873d6f",
+    "public_copy_sha256": "5802c5cc9000af81994b2f9c02095630eda5f416f7e5ef15b3ab22eeb0873d6f",
+    "session_fingerprints": [
+      {
+        "agent": "codex",
+        "sha256": "e70b699422dce9aba935857d20d28ce8f711dcb09298c70b6b4e18b2633aa332"
+      },
+      {
+        "agent": "claude",
+        "sha256": "624eb6f5ad5486dd2cce84acd7153d1fb37d025e4b337a947a527816b3c54dc6"
+      }
+    ],
+    "session_reuse": [
+      {
+        "agent": "codex",
+        "distinct_resumed_ids": 1
+      },
+      {
+        "agent": "claude",
+        "distinct_resumed_ids": 1
+      }
+    ],
+    "models": [
+      "claude-opus-5[1m]",
+      "gpt-6-astra"
+    ],
+    "total_agent_runs": 15,
+    "messages": 18,
+    "directions": {
+      "codex_to_claude": 11,
+      "claude_to_codex": 7
+    },
+    "draft_authors": [
+      "claude",
+      "codex"
+    ],
+    "draft_versions": 8,
+    "review_verdicts": [
+      {
+        "agent": "codex",
+        "version": 8,
+        "verdict": "APPROVE",
+        "artifact_sha256": "5802c5cc9000af81994b2f9c02095630eda5f416f7e5ef15b3ab22eeb0873d6f",
+        "code_sha256": null
+      },
+      {
+        "agent": "codex",
+        "version": 8,
+        "verdict": "APPROVE",
+        "artifact_sha256": "5802c5cc9000af81994b2f9c02095630eda5f416f7e5ef15b3ab22eeb0873d6f",
+        "code_sha256": null
+      },
+      {
+        "agent": "claude",
+        "version": 8,
+        "verdict": "APPROVE",
+        "artifact_sha256": "5802c5cc9000af81994b2f9c02095630eda5f416f7e5ef15b3ab22eeb0873d6f",
+        "code_sha256": null
+      }
+    ],
+    "evidence": [
+      {
+        "id": "evidence_90d6a858-af58-41e5-8ae5-5a2ee4aab40a",
+        "source": "https://git-scm.com/book/en/v2/Git-Internals-Git-Objects",
+        "retrieved_by": "codex",
+        "verified_by": null
+      },
+      {
+        "id": "evidence_335b4b48-13bc-4cf4-9924-c3de9591cc69",
+        "source": "https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/removing-sensitive-data-from-a-repository",
+        "retrieved_by": "codex",
+        "verified_by": null
+      },
+      {
+        "id": "evidence_879dedc4-21b9-4ebe-8e23-9c9f35f9f6c8",
+        "source": "https://www.sqlite.org/wal.html",
+        "retrieved_by": "codex",
+        "verified_by": null
+      },
+      {
+        "id": "evidence_c2f9c946-379d-4d03-868b-f0c87b5cf06e",
+        "source": "https://www.sqlite.org/whentouse.html",
+        "retrieved_by": "codex",
+        "verified_by": "claude"
+      },
+      {
+        "id": "evidence_2e881a28-6abc-4774-a68d-6f781b21b147",
+        "source": "https://www.sqlite.org/fts5.html",
+        "retrieved_by": "codex",
+        "verified_by": null
+      },
+      {
+        "id": "evidence_0caf5f9a-9efb-4c1c-b444-59b401f426be",
+        "source": "https://learn.microsoft.com/en-us/azure/architecture/patterns/event-sourcing",
+        "retrieved_by": "codex",
+        "verified_by": "claude"
+      },
+      {
+        "id": "evidence_6382ba2c-aca6-4f91-8040-0d97d8a7db15",
+        "source": "https://www.postgresql.org/docs/current/ddl-rowsecurity.html",
+        "retrieved_by": "codex",
+        "verified_by": "claude"
+      },
+      {
+        "id": "evidence_c31eb43d-cfc1-46e5-853a-898378573455",
+        "source": "https://docs.aws.amazon.com/prescriptive-guidance/latest/cloud-design-patterns/transactional-outbox.html",
+        "retrieved_by": "codex",
+        "verified_by": null
+      },
+      {
+        "id": "evidence_f1854c70-0c97-42a6-b5aa-602716fd8a4f",
+        "source": "https://www.sqlite.org/backup.html",
+        "retrieved_by": "codex",
+        "verified_by": null
+      },
+      {
+        "id": "evidence_f7d3e59d-e67e-4959-a45f-57d79a8e7c6e",
+        "source": "https://www.sqlite.org/pragma.html#pragma_secure_delete",
+        "retrieved_by": "codex",
+        "verified_by": "claude"
+      },
+      {
+        "id": "evidence_232cf699-675c-4963-815c-3db7c7adf303",
+        "source": "https://github.com/pgvector/pgvector",
+        "retrieved_by": "claude",
+        "verified_by": "codex"
+      },
+      {
+        "id": "evidence_4f01a28d-93a6-47d5-8839-aed928ba96d3",
+        "source": "https://platform.claude.com/docs/en/agents-and-tools/tool-use/memory-tool",
+        "retrieved_by": "claude",
+        "verified_by": "codex"
+      },
+      {
+        "id": "evidence_b661128a-41d4-4c18-ac64-3cc9d23e05d4",
+        "source": "https://qdrant.tech/documentation/concepts/indexing/",
+        "retrieved_by": "claude",
+        "verified_by": "codex"
+      },
+      {
+        "id": "evidence_a4ee91dd-c2d5-44c3-bbb5-18fa1b410ac4",
+        "source": "https://www.sqlite.org/fts5.html",
+        "retrieved_by": "claude",
+        "verified_by": "codex"
+      },
+      {
+        "id": "evidence_20fa28a2-40c1-4737-81b2-4a3a246aaf7e",
+        "source": "https://neo4j.com/docs/cypher-manual/current/indexes/semantic-indexes/vector-indexes/",
+        "retrieved_by": "claude",
+        "verified_by": "codex"
+      },
+      {
+        "id": "evidence_c5e9aee5-9550-4d0f-8a80-565b2958dc64",
+        "source": "https://ico.org.uk/for-organisations/uk-gdpr-guidance-and-resources/individual-rights/individual-rights/right-to-erasure/",
+        "retrieved_by": "claude",
+        "verified_by": "codex"
+      },
+      {
+        "id": "evidence_cb66db5e-90e6-40f7-8a87-bf80c44dad9f",
+        "source": "https://platform.claude.com/docs/en/build-with-claude/context-editing",
+        "retrieved_by": "claude",
+        "verified_by": "codex"
+      },
+      {
+        "id": "evidence_9cc5329d-436a-4cee-bf02-242fa7882910",
+        "source": "https://www.w3.org/TR/rdf11-concepts/",
+        "retrieved_by": "claude",
+        "verified_by": "codex"
+      },
+      {
+        "id": "evidence_e4f3dca0-cdcc-4f73-b9ab-ab8fd329d87a",
+        "source": "https://modelcontextprotocol.io/specification/2025-06-18/basic/authorization",
+        "retrieved_by": "claude",
+        "verified_by": "codex"
+      },
+      {
+        "id": "evidence_3a4c0807-7892-4a41-a4d7-ce91e9a4b1b9",
+        "source": "https://qdrant.tech/documentation/manage-data/points/",
+        "retrieved_by": "claude",
+        "verified_by": null
+      },
+      {
+        "id": "evidence_c7763479-3b9b-4dc1-9746-fca3781e4034",
+        "source": "https://www.w3.org/TR/rdf11-concepts/#section-dataset",
+        "retrieved_by": "codex",
+        "verified_by": null
+      },
+      {
+        "id": "evidence_4c2e20cf-af98-4153-9563-e2af50a58bf7",
+        "source": "https://learn.microsoft.com/en-us/azure/architecture/patterns/event-sourcing",
+        "retrieved_by": "claude",
+        "verified_by": "codex"
+      },
+      {
+        "id": "evidence_9c919e13-27a8-420a-998e-3a792bf7c741",
+        "source": "https://github.com/pgvector/pgvector#multitenancy",
+        "retrieved_by": "claude",
+        "verified_by": "codex"
+      },
+      {
+        "id": "evidence_1ff57326-13f8-493d-b2ee-141b220016b3",
+        "source": "https://www.postgresql.org/docs/current/ddl-rowsecurity.html",
+        "retrieved_by": "claude",
+        "verified_by": null
+      },
+      {
+        "id": "evidence_9b5c9ec0-9c61-4308-9a5e-a6829b9929c4",
+        "source": "https://qdrant.tech/documentation/manage-data/points/",
+        "retrieved_by": "codex",
+        "verified_by": "claude"
+      }
+    ],
+    "disagreements": [
+      {
+        "id": "disagreement_3f7070e9-10f4-440e-b5cd-07884bea9ddc",
+        "status": "merged",
+        "topic": "ANN 後的精確權限過濾是否構成隔離錯誤"
+      },
+      {
+        "id": "disagreement_6b01a9b1-fce4-4e0c-bb4f-618caafc0d80",
+        "status": "resolved_codex",
+        "topic": "RDF named graph 是否內建來源追溯語意"
+      }
+    ],
+    "code_test": null,
+    "integrated_sha": null
+  },
+  {
+    "label": "hardware",
+    "collaboration_id": "collab_79232b93-66b6-4ab6-a862-29a6d6bc24f7",
+    "status": "completed",
+    "initiator": "claude",
+    "final_version": 8,
+    "final_sha256": "20c093c972b84077adc61f36fe3c95ed76ae06fac06e32463ec3df856b2fd924",
+    "public_copy_sha256": "20c093c972b84077adc61f36fe3c95ed76ae06fac06e32463ec3df856b2fd924",
+    "session_fingerprints": [
+      {
+        "agent": "claude",
+        "sha256": "2ff0644c57a7662aa7a584e3c9d2af083183e5af19436cca41af5be1e07644e0"
+      },
+      {
+        "agent": "codex",
+        "sha256": "8fffd97feb3f44b94019e70c58695daec1614914664f4766e066e6ef62709c3b"
+      }
+    ],
+    "session_reuse": [
+      {
+        "agent": "claude",
+        "distinct_resumed_ids": 1
+      },
+      {
+        "agent": "codex",
+        "distinct_resumed_ids": 1
+      }
+    ],
+    "models": [
+      "claude-opus-5[1m]",
+      "gpt-6-astra"
+    ],
+    "total_agent_runs": 15,
+    "messages": 19,
+    "directions": {
+      "codex_to_claude": 12,
+      "claude_to_codex": 7
+    },
+    "draft_authors": [
+      "claude",
+      "codex"
+    ],
+    "draft_versions": 8,
+    "review_verdicts": [
+      {
+        "agent": "codex",
+        "version": 4,
+        "verdict": "APPROVE",
+        "artifact_sha256": "7e6c204497516bd172606cb4cb25ef34838d5cc87019f308116e40ddc4fefeca",
+        "code_sha256": null
+      },
+      {
+        "agent": "claude",
+        "version": 6,
+        "verdict": "APPROVE",
+        "artifact_sha256": "c2e2cc4e93c7caf7437a632454e4ca263fc27428cfe7e43fe47c4dccf5817a1e",
+        "code_sha256": null
+      },
+      {
+        "agent": "codex",
+        "version": 8,
+        "verdict": "APPROVE",
+        "artifact_sha256": "20c093c972b84077adc61f36fe3c95ed76ae06fac06e32463ec3df856b2fd924",
+        "code_sha256": null
+      },
+      {
+        "agent": "claude",
+        "version": 8,
+        "verdict": "APPROVE",
+        "artifact_sha256": "20c093c972b84077adc61f36fe3c95ed76ae06fac06e32463ec3df856b2fd924",
+        "code_sha256": null
+      },
+      {
+        "agent": "claude",
+        "version": 8,
+        "verdict": "APPROVE",
+        "artifact_sha256": "20c093c972b84077adc61f36fe3c95ed76ae06fac06e32463ec3df856b2fd924",
+        "code_sha256": null
+      },
+      {
+        "agent": "codex",
+        "version": 8,
+        "verdict": "APPROVE",
+        "artifact_sha256": "20c093c972b84077adc61f36fe3c95ed76ae06fac06e32463ec3df856b2fd924",
+        "code_sha256": null
+      }
+    ],
+    "evidence": [
+      {
+        "id": "evidence_3a1e7945-8800-4ba3-b50f-57d73bd7ee97",
+        "source": "https://www.apple.com/mac-studio/specs/",
+        "retrieved_by": "claude",
+        "verified_by": "codex"
+      },
+      {
+        "id": "evidence_5effc2ab-e9be-4268-848c-15b9974da48c",
+        "source": "https://www.apple.com/newsroom/2026/08/apple-introduces-new-mac-studio-with-m5-max-and-m5-ultra/",
+        "retrieved_by": "claude",
+        "verified_by": "codex"
+      },
+      {
+        "id": "evidence_88362fe0-8856-496c-a1e2-cf947a28aaf2",
+        "source": "https://ml-explore.github.io/mlx/build/html/index.html",
+        "retrieved_by": "claude",
+        "verified_by": "codex"
+      },
+      {
+        "id": "evidence_7733b696-5de4-41db-983d-b699da2b594d",
+        "source": "https://www.intel.com/content/www/us/en/products/sku/244340/intel-xeon-6978p-processor-504m-cache-2-10-ghz/specifications.html",
+        "retrieved_by": "claude",
+        "verified_by": "codex"
+      },
+      {
+        "id": "evidence_e770dc14-fd6c-4f55-a40c-e590039dbda5",
+        "source": "https://github.com/ggml-org/llama.cpp",
+        "retrieved_by": "claude",
+        "verified_by": "codex"
+      },
+      {
+        "id": "evidence_65c7c681-a3ec-4ee4-94a5-ff5d1b03c15b",
+        "source": "https://rocm.docs.amd.com/projects/install-on-linux/en/latest/reference/system-requirements.html",
+        "retrieved_by": "claude",
+        "verified_by": null
+      },
+      {
+        "id": "evidence_dc87e0ea-1e55-4a73-a8a2-db870167b6ad",
+        "source": "https://www.nvidia.com/en-us/geforce/graphics-cards/50-series/rtx-5090/",
+        "retrieved_by": "codex",
+        "verified_by": "claude"
+      },
+      {
+        "id": "evidence_dd13c71b-6678-4d0e-904d-245a761920a8",
+        "source": "https://www.nvidia.com/content/dam/en-zz/Solutions/data-center/rtx-pro-6000-blackwell-workstation-edition/workstation-blackwell-rtx-pro-6000-workstation-edition-nvidia-us-3519208-web.pdf",
+        "retrieved_by": "codex",
+        "verified_by": null
+      },
+      {
+        "id": "evidence_7be42468-0fc8-4ee7-b7d4-551dbd1bda21",
+        "source": "https://docs.vllm.ai/en/latest/serving/parallelism_scaling/",
+        "retrieved_by": "codex",
+        "verified_by": "claude"
+      },
+      {
+        "id": "evidence_c059349c-39f3-4b03-b0c9-646cf51356bf",
+        "source": "https://www.nvidia.com/en-us/geforce/news/rtx-50-series-graphics-cards-gpu-laptop-announcements/",
+        "retrieved_by": "codex",
+        "verified_by": null
+      },
+      {
+        "id": "evidence_2cd124c9-b858-4ef3-8e2e-78d4a150ae69",
+        "source": "https://docs.nvidia.com/dgx/dgx-spark/hardware.html",
+        "retrieved_by": "codex",
+        "verified_by": "claude"
+      },
+      {
+        "id": "evidence_f9d157ef-9149-424c-9367-f0968d1b37bb",
+        "source": "https://docs.nvidia.com/dgx/dgx-spark-porting-guide/porting/cuda.html",
+        "retrieved_by": "codex",
+        "verified_by": null
+      },
+      {
+        "id": "evidence_e3aac3f4-f6c2-49b6-bafc-1ea4ead885af",
+        "source": "https://developer.nvidia.com/blog/mastering-llm-techniques-inference-optimization/",
+        "retrieved_by": "codex",
+        "verified_by": null
+      },
+      {
+        "id": "evidence_e01087a5-43d9-4b28-bb40-216d21818311",
+        "source": "https://docs.vllm.ai/en/latest/getting_started/installation/gpu/",
+        "retrieved_by": "codex",
+        "verified_by": "claude"
+      },
+      {
+        "id": "evidence_5fcbc973-11c1-48c6-9765-fbe151ec5645",
+        "source": "https://www.nvidia.com/en-us/products/workstations/professional-desktop-gpus/rtx-pro-6000-family/",
+        "retrieved_by": "codex",
+        "verified_by": "claude"
+      },
+      {
+        "id": "evidence_e72f59ce-0c24-42a7-9c0b-2127856c120d",
+        "source": "https://www.amd.com/en/products/processors/workstations/ryzen-threadripper/9000-wx-series/amd-ryzen-threadripper-pro-9995wx.html",
+        "retrieved_by": "codex",
+        "verified_by": null
+      },
+      {
+        "id": "evidence_2dfdc9f8-cb49-4c6a-9982-46f2669d8633",
+        "source": "https://docs.nvidia.com/dgx/dgx-spark-porting-guide/porting/dependencies.html",
+        "retrieved_by": "codex",
+        "verified_by": null
+      },
+      {
+        "id": "evidence_63b9d568-2039-4d6d-bc09-815135d02e3f",
+        "source": "https://docs.nvidia.com/dgx/dgx-spark/hardware.html",
+        "retrieved_by": "claude",
+        "verified_by": null
+      },
+      {
+        "id": "evidence_dcedb90b-21a8-4f44-85ce-c9865b611f1d",
+        "source": "https://huggingface.co/deepseek-ai/DeepSeek-V3",
+        "retrieved_by": "claude",
+        "verified_by": "codex"
+      },
+      {
+        "id": "evidence_4cbb096d-81fa-430b-9b01-1fe07b9bc8be",
+        "source": "https://rocm.docs.amd.com/projects/radeon-ryzen/en/docs-7.1.1/docs/install/installryz/native_linux/install-ryzen.html",
+        "retrieved_by": "codex",
+        "verified_by": "claude"
+      },
+      {
+        "id": "evidence_ab502f47-c473-4772-bee0-27e74c487d3f",
+        "source": "https://dam-cdn.nvd.orangelogic.com/AssetLink/3lhuar5pc56pn7se4c7ahsskw20xw8h5.pdf",
+        "retrieved_by": "codex",
+        "verified_by": null
+      },
+      {
+        "id": "evidence_0c42653f-07db-4acb-baf7-fdbfb09d3bd9",
+        "source": "https://www.nvidia.com/en-us/products/workstations/dgx-spark/",
+        "retrieved_by": "claude",
+        "verified_by": "codex"
+      }
+    ],
+    "disagreements": [
+      {
+        "id": "disagreement_4ccbc1ec-9a5f-4d04-a294-80db6639df32",
+        "status": "resolved_codex",
+        "topic": "以通用 ROCm 清單未列 gfx1151 推導 Ryzen AI Max 官方支援缺口"
+      },
+      {
+        "id": "disagreement_e229af99-2f54-487a-a13f-c56f8dce3b3f",
+        "status": "merged",
+        "topic": "DGX Spark 200B／405B 宣稱的量化前提是否未知"
+      }
+    ],
+    "code_test": null,
+    "integrated_sha": null
+  },
+  {
+    "label": "coding",
+    "collaboration_id": "collab_00edeab6-b06d-4ef4-b190-393333dad499",
+    "status": "completed",
+    "initiator": "claude",
+    "final_version": 7,
+    "final_sha256": "9c2ddc51ef3f6554953568e94a30304b528d161c8bedbda04f5b4cd620416bbb",
+    "public_copy_sha256": "9c2ddc51ef3f6554953568e94a30304b528d161c8bedbda04f5b4cd620416bbb",
+    "session_fingerprints": [
+      {
+        "agent": "claude",
+        "sha256": "96a0387d2eebc6a7f17c7706cfcfe30f6c80fa23211da8e88bc0400baeecb3b6"
+      },
+      {
+        "agent": "codex",
+        "sha256": "68da70ef336b3d7c4d2af25e44093872f81016055858bd15d4ffdea60a909faa"
+      }
+    ],
+    "session_reuse": [
+      {
+        "agent": "claude",
+        "distinct_resumed_ids": 1
+      },
+      {
+        "agent": "codex",
+        "distinct_resumed_ids": 1
+      }
+    ],
+    "models": [
+      "claude-opus-5[1m]",
+      "gpt-6-astra"
+    ],
+    "total_agent_runs": 24,
+    "messages": 28,
+    "directions": {
+      "codex_to_claude": 13,
+      "claude_to_codex": 15
+    },
+    "draft_authors": [
+      "claude",
+      "codex"
+    ],
+    "draft_versions": 7,
+    "review_verdicts": [
+      {
+        "agent": "claude",
+        "version": 4,
+        "verdict": "REVISE",
+        "artifact_sha256": "4b7e1f02fb6763095b2850dde8c62a09f7157576bd407c430dd8c4b25ea54694",
+        "code_sha256": "0c1803748bd4c7336317006a65a51deed672149c"
+      },
+      {
+        "agent": "codex",
+        "version": 4,
+        "verdict": "REVISE",
+        "artifact_sha256": "4b7e1f02fb6763095b2850dde8c62a09f7157576bd407c430dd8c4b25ea54694",
+        "code_sha256": "0c1803748bd4c7336317006a65a51deed672149c"
+      },
+      {
+        "agent": "claude",
+        "version": 5,
+        "verdict": "APPROVE",
+        "artifact_sha256": "49e1513ba51ca4850d5073f42dcdd0deebf97c64358944cd9ea6c3d4c48b976a",
+        "code_sha256": "0c1803748bd4c7336317006a65a51deed672149c"
+      },
+      {
+        "agent": "codex",
+        "version": 5,
+        "verdict": "REVISE",
+        "artifact_sha256": "49e1513ba51ca4850d5073f42dcdd0deebf97c64358944cd9ea6c3d4c48b976a",
+        "code_sha256": "0c1803748bd4c7336317006a65a51deed672149c"
+      },
+      {
+        "agent": "claude",
+        "version": 7,
+        "verdict": "APPROVE",
+        "artifact_sha256": "9c2ddc51ef3f6554953568e94a30304b528d161c8bedbda04f5b4cd620416bbb",
+        "code_sha256": "0c1803748bd4c7336317006a65a51deed672149c"
+      },
+      {
+        "agent": "codex",
+        "version": 7,
+        "verdict": "APPROVE",
+        "artifact_sha256": "9c2ddc51ef3f6554953568e94a30304b528d161c8bedbda04f5b4cd620416bbb",
+        "code_sha256": "0c1803748bd4c7336317006a65a51deed672149c"
+      }
+    ],
+    "evidence": [
+      {
+        "id": "evidence_fe75995d-e0d3-4e65-a84e-6cca42b648e1",
+        "source": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/max",
+        "retrieved_by": "claude",
+        "verified_by": "codex"
+      },
+      {
+        "id": "evidence_b91372fd-0a49-4ce7-9d3e-900c90daf4d1",
+        "source": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/min",
+        "retrieved_by": "claude",
+        "verified_by": "codex"
+      }
+    ],
+    "disagreements": [
+      {
+        "id": "disagreement_83eea66d-887b-4e66-aca7-fd8fb43c01c3",
+        "status": "merged",
+        "topic": "回歸測試可支持的結論範圍"
+      }
+    ],
+    "code_test": {
+      "passed": true,
+      "exit_code": 0
+    },
+    "integrated_sha": "0c1803748bd4c7336317006a65a51deed672149c"
+  },
+  {
+    "label": "review-regression",
+    "collaboration_id": "collab_e9896544-a56c-4754-81c8-a2b121170a1b",
+    "status": "completed",
+    "initiator": "codex",
+    "final_version": 3,
+    "final_sha256": "207ce4a33e62fb30f7c1d982e8ac2ef8400d28c0c0d67176bd885e0f4f3561a1",
+    "public_copy_sha256": "207ce4a33e62fb30f7c1d982e8ac2ef8400d28c0c0d67176bd885e0f4f3561a1",
+    "session_fingerprints": [
+      {
+        "agent": "codex",
+        "sha256": "ceadfae9d5a959b30e82d48095f1faf43f9dace6bec5f76666e95c7b79b54f11"
+      },
+      {
+        "agent": "claude",
+        "sha256": "56679b85ed8ac83bddf4cb882111559f01e149af4f7c0505fa301cd189e40b07"
+      }
+    ],
+    "session_reuse": [
+      {
+        "agent": "codex",
+        "distinct_resumed_ids": 1
+      },
+      {
+        "agent": "claude",
+        "distinct_resumed_ids": 1
+      }
+    ],
+    "models": [
+      "gpt-6-astra",
+      "claude-opus-5[1m]"
+    ],
+    "total_agent_runs": 6,
+    "messages": 6,
+    "directions": {
+      "codex_to_claude": 3,
+      "claude_to_codex": 3
+    },
+    "draft_authors": [
+      "acceptance-fixture",
+      "codex",
+      "claude"
+    ],
+    "draft_versions": 3,
+    "review_verdicts": [
+      {
+        "agent": "codex",
+        "version": 1,
+        "verdict": "REVISE",
+        "artifact_sha256": "c62e59227f18381851f512b50e5b900db5199d78da5d05d70dd16e3439f559dc",
+        "code_sha256": null
+      },
+      {
+        "agent": "claude",
+        "version": 1,
+        "verdict": "REVISE",
+        "artifact_sha256": "c62e59227f18381851f512b50e5b900db5199d78da5d05d70dd16e3439f559dc",
+        "code_sha256": null
+      },
+      {
+        "agent": "codex",
+        "version": 3,
+        "verdict": "APPROVE",
+        "artifact_sha256": "207ce4a33e62fb30f7c1d982e8ac2ef8400d28c0c0d67176bd885e0f4f3561a1",
+        "code_sha256": null
+      },
+      {
+        "agent": "claude",
+        "version": 3,
+        "verdict": "APPROVE",
+        "artifact_sha256": "207ce4a33e62fb30f7c1d982e8ac2ef8400d28c0c0d67176bd885e0f4f3561a1",
+        "code_sha256": null
+      }
+    ],
+    "evidence": [],
+    "disagreements": [],
+    "code_test": null,
+    "integrated_sha": null
+  }
+]

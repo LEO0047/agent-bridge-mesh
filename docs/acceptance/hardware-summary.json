@@ -1,0 +1,236 @@
+{
+  "label": "hardware",
+  "collaboration_id": "collab_79232b93-66b6-4ab6-a862-29a6d6bc24f7",
+  "status": "completed",
+  "initiator": "claude",
+  "final_version": 8,
+  "final_sha256": "20c093c972b84077adc61f36fe3c95ed76ae06fac06e32463ec3df856b2fd924",
+  "public_copy_sha256": "20c093c972b84077adc61f36fe3c95ed76ae06fac06e32463ec3df856b2fd924",
+  "session_fingerprints": [
+    {
+      "agent": "claude",
+      "sha256": "2ff0644c57a7662aa7a584e3c9d2af083183e5af19436cca41af5be1e07644e0"
+    },
+    {
+      "agent": "codex",
+      "sha256": "8fffd97feb3f44b94019e70c58695daec1614914664f4766e066e6ef62709c3b"
+    }
+  ],
+  "session_reuse": [
+    {
+      "agent": "claude",
+      "distinct_resumed_ids": 1
+    },
+    {
+      "agent": "codex",
+      "distinct_resumed_ids": 1
+    }
+  ],
+  "models": [
+    "claude-opus-5[1m]",
+    "gpt-6-astra"
+  ],
+  "total_agent_runs": 15,
+  "messages": 19,
+  "directions": {
+    "codex_to_claude": 12,
+    "claude_to_codex": 7
+  },
+  "draft_authors": [
+    "claude",
+    "codex"
+  ],
+  "draft_versions": 8,
+  "review_verdicts": [
+    {
+      "agent": "codex",
+      "version": 4,
+      "verdict": "APPROVE",
+      "artifact_sha256": "7e6c204497516bd172606cb4cb25ef34838d5cc87019f308116e40ddc4fefeca",
+      "code_sha256": null
+    },
+    {
+      "agent": "claude",
+      "version": 6,
+      "verdict": "APPROVE",
+      "artifact_sha256": "c2e2cc4e93c7caf7437a632454e4ca263fc27428cfe7e43fe47c4dccf5817a1e",
+      "code_sha256": null
+    },
+    {
+      "agent": "codex",
+      "version": 8,
+      "verdict": "APPROVE",
+      "artifact_sha256": "20c093c972b84077adc61f36fe3c95ed76ae06fac06e32463ec3df856b2fd924",
+      "code_sha256": null
+    },
+    {
+      "agent": "claude",
+      "version": 8,
+      "verdict": "APPROVE",
+      "artifact_sha256": "20c093c972b84077adc61f36fe3c95ed76ae06fac06e32463ec3df856b2fd924",
+      "code_sha256": null
+    },
+    {
+      "agent": "claude",
+      "version": 8,
+      "verdict": "APPROVE",
+      "artifact_sha256": "20c093c972b84077adc61f36fe3c95ed76ae06fac06e32463ec3df856b2fd924",
+      "code_sha256": null
+    },
+    {
+      "agent": "codex",
+      "version": 8,
+      "verdict": "APPROVE",
+      "artifact_sha256": "20c093c972b84077adc61f36fe3c95ed76ae06fac06e32463ec3df856b2fd924",
+      "code_sha256": null
+    }
+  ],
+  "evidence": [
+    {
+      "id": "evidence_3a1e7945-8800-4ba3-b50f-57d73bd7ee97",
+      "source": "https://www.apple.com/mac-studio/specs/",
+      "retrieved_by": "claude",
+      "verified_by": "codex"
+    },
+    {
+      "id": "evidence_5effc2ab-e9be-4268-848c-15b9974da48c",
+      "source": "https://www.apple.com/newsroom/2026/08/apple-introduces-new-mac-studio-with-m5-max-and-m5-ultra/",
+      "retrieved_by": "claude",
+      "verified_by": "codex"
+    },
+    {
+      "id": "evidence_88362fe0-8856-496c-a1e2-cf947a28aaf2",
+      "source": "https://ml-explore.github.io/mlx/build/html/index.html",
+      "retrieved_by": "claude",
+      "verified_by": "codex"
+    },
+    {
+      "id": "evidence_7733b696-5de4-41db-983d-b699da2b594d",
+      "source": "https://www.intel.com/content/www/us/en/products/sku/244340/intel-xeon-6978p-processor-504m-cache-2-10-ghz/specifications.html",
+      "retrieved_by": "claude",
+      "verified_by": "codex"
+    },
+    {
+      "id": "evidence_e770dc14-fd6c-4f55-a40c-e590039dbda5",
+      "source": "https://github.com/ggml-org/llama.cpp",
+      "retrieved_by": "claude",
+      "verified_by": "codex"
+    },
+    {
+      "id": "evidence_65c7c681-a3ec-4ee4-94a5-ff5d1b03c15b",
+      "source": "https://rocm.docs.amd.com/projects/install-on-linux/en/latest/reference/system-requirements.html",
+      "retrieved_by": "claude",
+      "verified_by": null
+    },
+    {
+      "id": "evidence_dc87e0ea-1e55-4a73-a8a2-db870167b6ad",
+      "source": "https://www.nvidia.com/en-us/geforce/graphics-cards/50-series/rtx-5090/",
+      "retrieved_by": "codex",
+      "verified_by": "claude"
+    },
+    {
+      "id": "evidence_dd13c71b-6678-4d0e-904d-245a761920a8",
+      "source": "https://www.nvidia.com/content/dam/en-zz/Solutions/data-center/rtx-pro-6000-blackwell-workstation-edition/workstation-blackwell-rtx-pro-6000-workstation-edition-nvidia-us-3519208-web.pdf",
+      "retrieved_by": "codex",
+      "verified_by": null
+    },
+    {
+      "id": "evidence_7be42468-0fc8-4ee7-b7d4-551dbd1bda21",
+      "source": "https://docs.vllm.ai/en/latest/serving/parallelism_scaling/",
+      "retrieved_by": "codex",
+      "verified_by": "claude"
+    },
+    {
+      "id": "evidence_c059349c-39f3-4b03-b0c9-646cf51356bf",
+      "source": "https://www.nvidia.com/en-us/geforce/news/rtx-50-series-graphics-cards-gpu-laptop-announcements/",
+      "retrieved_by": "codex",
+      "verified_by": null
+    },
+    {
+      "id": "evidence_2cd124c9-b858-4ef3-8e2e-78d4a150ae69",
+      "source": "https://docs.nvidia.com/dgx/dgx-spark/hardware.html",
+      "retrieved_by": "codex",
+      "verified_by": "claude"
+    },
+    {
+      "id": "evidence_f9d157ef-9149-424c-9367-f0968d1b37bb",
+      "source": "https://docs.nvidia.com/dgx/dgx-spark-porting-guide/porting/cuda.html",
+      "retrieved_by": "codex",
+      "verified_by": null
+    },
+    {
+      "id": "evidence_e3aac3f4-f6c2-49b6-bafc-1ea4ead885af",
+      "source": "https://developer.nvidia.com/blog/mastering-llm-techniques-inference-optimization/",
+      "retrieved_by": "codex",
+      "verified_by": null
+    },
+    {
+      "id": "evidence_e01087a5-43d9-4b28-bb40-216d21818311",
+      "source": "https://docs.vllm.ai/en/latest/getting_started/installation/gpu/",
+      "retrieved_by": "codex",
+      "verified_by": "claude"
+    },
+    {
+      "id": "evidence_5fcbc973-11c1-48c6-9765-fbe151ec5645",
+      "source": "https://www.nvidia.com/en-us/products/workstations/professional-desktop-gpus/rtx-pro-6000-family/",
+      "retrieved_by": "codex",
+      "verified_by": "claude"
+    },
+    {
+      "id": "evidence_e72f59ce-0c24-42a7-9c0b-2127856c120d",
+      "source": "https://www.amd.com/en/products/processors/workstations/ryzen-threadripper/9000-wx-series/amd-ryzen-threadripper-pro-9995wx.html",
+      "retrieved_by": "codex",
+      "verified_by": null
+    },
+    {
+      "id": "evidence_2dfdc9f8-cb49-4c6a-9982-46f2669d8633",
+      "source": "https://docs.nvidia.com/dgx/dgx-spark-porting-guide/porting/dependencies.html",
+      "retrieved_by": "codex",
+      "verified_by": null
+    },
+    {
+      "id": "evidence_63b9d568-2039-4d6d-bc09-815135d02e3f",
+      "source": "https://docs.nvidia.com/dgx/dgx-spark/hardware.html",
+      "retrieved_by": "claude",
+      "verified_by": null
+    },
+    {
+      "id": "evidence_dcedb90b-21a8-4f44-85ce-c9865b611f1d",
+      "source": "https://huggingface.co/deepseek-ai/DeepSeek-V3",
+      "retrieved_by": "claude",
+      "verified_by": "codex"
+    },
+    {
+      "id": "evidence_4cbb096d-81fa-430b-9b01-1fe07b9bc8be",
+      "source": "https://rocm.docs.amd.com/projects/radeon-ryzen/en/docs-7.1.1/docs/install/installryz/native_linux/install-ryzen.html",
+      "retrieved_by": "codex",
+      "verified_by": "claude"
+    },
+    {
+      "id": "evidence_ab502f47-c473-4772-bee0-27e74c487d3f",
+      "source": "https://dam-cdn.nvd.orangelogic.com/AssetLink/3lhuar5pc56pn7se4c7ahsskw20xw8h5.pdf",
+      "retrieved_by": "codex",
+      "verified_by": null
+    },
+    {
+      "id": "evidence_0c42653f-07db-4acb-baf7-fdbfb09d3bd9",
+      "source": "https://www.nvidia.com/en-us/products/workstations/dgx-spark/",
+      "retrieved_by": "claude",
+      "verified_by": "codex"
+    }
+  ],
+  "disagreements": [
+    {
+      "id": "disagreement_4ccbc1ec-9a5f-4d04-a294-80db6639df32",
+      "status": "resolved_codex",
+      "topic": "以通用 ROCm 清單未列 gfx1151 推導 Ryzen AI Max 官方支援缺口"
+    },
+    {
+      "id": "disagreement_e229af99-2f54-487a-a13f-c56f8dce3b3f",
+      "status": "merged",
+      "topic": "DGX Spark 200B／405B 宣稱的量化前提是否未知"
+    }
+  ],
+  "code_test": null,
+  "integrated_sha": null
+}

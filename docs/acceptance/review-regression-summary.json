@@ -1,0 +1,79 @@
+{
+  "label": "review-regression",
+  "collaboration_id": "collab_e9896544-a56c-4754-81c8-a2b121170a1b",
+  "status": "completed",
+  "initiator": "codex",
+  "final_version": 3,
+  "final_sha256": "207ce4a33e62fb30f7c1d982e8ac2ef8400d28c0c0d67176bd885e0f4f3561a1",
+  "public_copy_sha256": "207ce4a33e62fb30f7c1d982e8ac2ef8400d28c0c0d67176bd885e0f4f3561a1",
+  "session_fingerprints": [
+    {
+      "agent": "codex",
+      "sha256": "ceadfae9d5a959b30e82d48095f1faf43f9dace6bec5f76666e95c7b79b54f11"
+    },
+    {
+      "agent": "claude",
+      "sha256": "56679b85ed8ac83bddf4cb882111559f01e149af4f7c0505fa301cd189e40b07"
+    }
+  ],
+  "session_reuse": [
+    {
+      "agent": "codex",
+      "distinct_resumed_ids": 1
+    },
+    {
+      "agent": "claude",
+      "distinct_resumed_ids": 1
+    }
+  ],
+  "models": [
+    "gpt-6-astra",
+    "claude-opus-5[1m]"
+  ],
+  "total_agent_runs": 6,
+  "messages": 6,
+  "directions": {
+    "codex_to_claude": 3,
+    "claude_to_codex": 3
+  },
+  "draft_authors": [
+    "acceptance-fixture",
+    "codex",
+    "claude"
+  ],
+  "draft_versions": 3,
+  "review_verdicts": [
+    {
+      "agent": "codex",
+      "version": 1,
+      "verdict": "REVISE",
+      "artifact_sha256": "c62e59227f18381851f512b50e5b900db5199d78da5d05d70dd16e3439f559dc",
+      "code_sha256": null
+    },
+    {
+      "agent": "claude",
+      "version": 1,
+      "verdict": "REVISE",
+      "artifact_sha256": "c62e59227f18381851f512b50e5b900db5199d78da5d05d70dd16e3439f559dc",
+      "code_sha256": null
+    },
+    {
+      "agent": "codex",
+      "version": 3,
+      "verdict": "APPROVE",
+      "artifact_sha256": "207ce4a33e62fb30f7c1d982e8ac2ef8400d28c0c0d67176bd885e0f4f3561a1",
+      "code_sha256": null
+    },
+    {
+      "agent": "claude",
+      "version": 3,
+      "verdict": "APPROVE",
+      "artifact_sha256": "207ce4a33e62fb30f7c1d982e8ac2ef8400d28c0c0d67176bd885e0f4f3561a1",
+      "code_sha256": null
+    }
+  ],
+  "evidence": [],
+  "disagreements": [],
+  "code_test": null,
+  "integrated_sha": null
+}

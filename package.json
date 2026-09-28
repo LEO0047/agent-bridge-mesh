@@ -1,5 +1,5 @@
 {
-  "name": "agent-bridge",
+  "name": "agent-bridge-mesh",
   "version": "1.0.0",
   "private": true,
   "type": "module",
@@ -32,5 +32,11 @@
     "prettier": "^3.9.9",
     "tsx": "^4.20.0",
     "typescript": "^5.9.3"
-  }
+  },
+  "description": "Autonomous cross-agent collaboration between Codex, Claude Code, and beyond.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LEO0047/agent-bridge-mesh.git"
+  },
+  "license": "MIT"
 }

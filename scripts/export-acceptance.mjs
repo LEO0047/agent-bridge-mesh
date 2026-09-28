@@ -5,8 +5,11 @@ import { createHash } from 'node:crypto';
 import { Store } from '../dist/database/sqlite.js';
 import { git } from '../dist/tasks/worktrees.js';
 import { loadConfig } from '../dist/config.js';
+import { Service } from '../dist/service.js';
+import { qualityGate } from '../dist/consensus/quality-gate.js';
 const config = loadConfig(),
-  db = new Store(config.db);
+  db = new Store(config.db),
+  service = new Service(db, config);
 const runs = JSON.parse(readFileSync(process.argv[2] || 'logs/acceptance-runs.json', 'utf8'));
 const digest = (v) => createHash('sha256').update(v).digest('hex');
 const clean = (v) =>
@@ -27,6 +30,13 @@ for (const [label, id] of runs) {
     messages = db.all('messages', id),
     versions = db.all('artifact_versions', id).filter((v) => v.name === 'draft.md'),
     reviews = db.all('reviews', id);
+  const gate = qualityGate(db, service.artifacts, service.bus, id);
+  if (
+    !gate.ready ||
+    c.final_sha256 !== a.sha256 ||
+    digest(readFileSync(join(config.artifactsRoot, id, 'final.md'), 'utf8')) !== a.sha256
+  )
+    throw Error(`${label}: final artifact or current quality gate failed validation`);
   const eventTrace = db
     .events(id)
     .filter((e) =>
@@ -83,6 +93,7 @@ for (const [label, id] of runs) {
     initiator: c.initiator,
     final_version: c.final_version,
     final_sha256: c.final_sha256,
+    public_copy_sha256: digest(clean(a.content)),
     session_fingerprints: sessions.map((s) => ({ agent: s.agent, sha256: digest(s.session_id) })),
     session_reuse: sessions.map((s) => ({
       agent: s.agent,

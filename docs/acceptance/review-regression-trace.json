@@ -1,0 +1,375 @@
+[
+  {
+    "sequence": 1452,
+    "type": "artifact.updated",
+    "at": "2026-09-28T15:24:17.039Z",
+    "data": {
+      "name": "draft.md",
+      "base_version": 0,
+      "new_version": 1,
+      "author": "acceptance-fixture"
+    }
+  },
+  {
+    "sequence": 1453,
+    "type": "agent.started",
+    "at": "2026-09-28T15:24:17.049Z",
+    "data": {
+      "agent": "codex",
+      "run_id": "run_e77f9d12-2011-4a42-b4f7-a5de9152828d",
+      "phase": "review",
+      "session_id": null,
+      "retry": 0
+    }
+  },
+  {
+    "sequence": 1481,
+    "type": "peer.message",
+    "at": "2026-09-28T15:24:40.724Z",
+    "data": {
+      "message_id": "msg_5662b0f4-886b-4f16-aea4-7c258b927b81",
+      "from": "codex",
+      "to": "claude",
+      "type": "review",
+      "requires_reply": false,
+      "content_sha256": "119bc4279a5892899e4e3a8aa5cf5efde567fba8ef6f86146b0aa940e807718b",
+      "content_preview": "已讀取 draft.md 第 1 版。本版有必要修正：版本不符須拒絕寫入並重讀最新版後整合，不可直接覆蓋；晚送出的內容不一定正確；任何改稿均使舊版 APPROVE 失效，雙方須重審同一新版；樂觀版本控制不能保證所有修改永不遺失或內容正確。此",
+      "evidence_refs": []
+    }
+  },
+  {
+    "sequence": 1483,
+    "type": "review.submitted",
+    "at": "2026-09-28T15:24:40.730Z",
+    "data": {
+      "artifact_version": 1,
+      "verdict": "REVISE",
+      "blocking_issues": [
+        "樂觀版本控制的衝突處理錯誤：base_version 不符不可直接覆蓋最新版，且較晚送出的內容不代表較正確。",
+        "核准有效性錯誤：後續任何編輯均使先前版本的 APPROVE 失效，須對同一新版本重新審核。",
+        "保證範圍錯誤：版本檢查不能保證所有修改永不遺失，也不能保證文字內容正確。",
+        "缺少必要的「限制」章節，且全文未達約 250 至 400 字。"
+      ],
+      "required_changes": [
+        "說明讀取內容及版本、附 base_version 提交，並以原子方式檢查版本與寫入；版本不符須拒絕，重讀並整合後重新提交。",
+        "明確規定核准只適用受審版本，任何改稿後雙方都須重新審核同一版本。",
+        "新增「限制」節，交代此機制只能偵測受版本檢查涵蓋的並行衝突，不能自動解決語意衝突或保證內容正確；衝突仍須整合並重新驗證。",
+        "保留「原則」與「限制」兩節，調整為約 250 至 400 字的繁體中文報告。"
+      ],
+      "non_blocking_notes": [],
+      "confidence": "high",
+      "id": "review_c90ac46c-13a6-4b04-83b7-aa186506012f",
+      "collaboration_id": "collab_e9896544-a56c-4754-81c8-a2b121170a1b",
+      "agent": "codex",
+      "artifact_sha256": "c62e59227f18381851f512b50e5b900db5199d78da5d05d70dd16e3439f559dc",
+      "code_sha256": null,
+      "created_at": "2026-09-28T15:24:40.730Z"
+    }
+  },
+  {
+    "sequence": 1491,
+    "type": "agent.completed",
+    "at": "2026-09-28T15:24:45.749Z",
+    "data": {
+      "agent": "codex",
+      "run_id": "run_e77f9d12-2011-4a42-b4f7-a5de9152828d",
+      "summary": "已審核共享稿件第 1 版並提交 REVISE：衝突處理、核准有效性與正確性保證均有錯誤，另缺少「限制」節且篇幅不足。已通知同儕具體修正要求；本輪未編輯稿件，修正後須重新審核同一新版。"
+    }
+  },
+  {
+    "sequence": 1492,
+    "type": "agent.started",
+    "at": "2026-09-28T15:24:45.759Z",
+    "data": {
+      "agent": "claude",
+      "run_id": "run_7ebd393d-9744-4fe5-8296-3fdbd03a66b9",
+      "phase": "review",
+      "session_id": null,
+      "retry": 0
+    }
+  },
+  {
+    "sequence": 1523,
+    "type": "peer.message",
+    "at": "2026-09-28T15:25:12.235Z",
+    "data": {
+      "message_id": "msg_23d93387-7041-4751-851a-b88c7d838ca8",
+      "from": "claude",
+      "to": "codex",
+      "type": "review",
+      "requires_reply": false,
+      "content_sha256": "ad1e7014c678ac3eebb4bd6c03dee6b1b565294e33f1927eaae82ee85596da11",
+      "content_preview": "已獨立讀取 draft.md 第 1 版（sha256 c62e5922…），與你的判斷一致：本版必須 REVISE，我不會為了流程而假核准。本輪依指示只審核、不編輯。\n\n確認你列出的四項阻斷問題全部成立，我逐條覆核：\n1.[quoted ",
+      "evidence_refs": []
+    }
+  },
+  {
+    "sequence": 1548,
+    "type": "review.submitted",
+    "at": "2026-09-28T15:25:26.701Z",
+    "data": {
+      "artifact_version": 1,
+      "verdict": "REVISE",
+      "blocking_issues": [
+        "衝突處理描述錯誤：稿件寫「若版本不符，系統可以直接覆蓋最新版」。樂觀版本控制在 base_version 不符時必須拒絕寫入，不可覆蓋。",
+        "因果推論錯誤：稿件寫「較晚送出的內容一定比較正確」。提交時間與內容正確性無關，晚送出者可能建立在過期版本上。",
+        "核准語意錯誤：稿件寫「之前給過 APPROVE 之後，後續任何改稿都不需要重新審核；原核准能永久沿用」。核准只對被審的該版本有效，任何後續編輯都使其失效。",
+        "保證範圍誇大：稿件寫「保證所有人的修改都不會遺失，並且保證文字內容正確」。版本檢查只能偵測受版本化寫入路徑涵蓋的並行衝突，既不保證內容正確，也不能自動合併。",
+        "缺少必要章節「限制」（required_sections 為「原則」「限制」）。",
+        "篇幅不足：全文約 130 字，未達要求的約 250 至 400 字。"
+      ],
+      "required_changes": [
+        "改寫「原則」節，寫出正確流程：讀取時取得目前版本 → 提交時附上該 base_version → 伺服器端以原子方式比對版本並寫入 → 成功則版本遞增，不符則回報衝突並拒絕寫入 → 提交者重讀最新版、整合後以新的 base_version 重送。",
+        "刪除「較晚送出的內容一定比較正確」，改為說明提交順序不代表正確性，衝突須由人／Agent 判斷後整合。",
+        "明確寫出核准只綁定受審的該一版本，任何後續編輯均使先前 APPROVE 失效，雙方須對同一新版本重新審核。",
+        "新增「限制」節，說明：只能偵測衝突、不能自動解決語意衝突；不保證文字內容正確；保護範圍僅限走版本化寫入路徑的變更；被拒絕的修改若未重做整合仍會遺失；整合後須重新驗證與重新審核。",
+        "保留並確實使用「原則」與「限制」兩個標題，全文擴充至約 250 至 400 字的繁體中文。"
+      ],
+      "non_blocking_notes": [
+        "建議在「原則」節點明「原子式比對並寫入」，否則檢查與寫入之間仍存在競態，說明會不完整。",
+        "建議明確使用 STALE_VERSION 這類具體回應名稱，讓流程描述可對應實際工具行為。"
+      ],
+      "confidence": "high",
+      "id": "review_15071ea4-bffa-47f1-aa75-7fe61b4bb165",
+      "collaboration_id": "collab_e9896544-a56c-4754-81c8-a2b121170a1b",
+      "agent": "claude",
+      "artifact_sha256": "c62e59227f18381851f512b50e5b900db5199d78da5d05d70dd16e3439f559dc",
+      "code_sha256": null,
+      "created_at": "2026-09-28T15:25:26.701Z"
+    }
+  },
+  {
+    "sequence": 1558,
+    "type": "agent.completed",
+    "at": "2026-09-28T15:25:39.454Z",
+    "data": {
+      "agent": "claude",
+      "run_id": "run_7ebd393d-9744-4fe5-8296-3fdbd03a66b9",
+      "summary": "讀取 draft.md v1 並提交 REVISE（confidence: high）。阻斷問題 6 項：(1)「版本不符可直接覆蓋最新版」錯誤，應拒絕寫入；(2)「較晚送出的內容一定比較正確」錯誤；(3)「原核准永久沿用、後續改稿不需重審」錯誤，核准只綁定受審版本；(4)「保證所有修改不遺失且內容正確」誇大保證範圍；(5) 缺少必要章節「限制」；(6) 全文約 130 字，未達 250–400 "
+    }
+  },
+  {
+    "sequence": 1559,
+    "type": "agent.started",
+    "at": "2026-09-28T15:25:39.465Z",
+    "data": {
+      "agent": "codex",
+      "run_id": "run_d73e798b-a42d-4f6f-ae04-3357df5cbce0",
+      "phase": "revision",
+      "session_id": "ceadfae9d5a959b30e82d48095f1faf43f9dace6bec5f76666e95c7b79b54f11",
+      "retry": 0
+    }
+  },
+  {
+    "sequence": 1578,
+    "type": "artifact.updated",
+    "at": "2026-09-28T15:26:08.458Z",
+    "data": {
+      "name": "draft.md",
+      "base_version": 1,
+      "new_version": 2,
+      "author": "codex"
+    }
+  },
+  {
+    "sequence": 1591,
+    "type": "peer.message",
+    "at": "2026-09-28T15:26:17.432Z",
+    "data": {
+      "message_id": "msg_bf17177e-95f1-4b03-93b5-6f985f7c6970",
+      "from": "codex",
+      "to": "claude",
+      "type": "answer",
+      "reply_to": "msg_23d93387-7041-4751-851a-b88c7d838ca8",
+      "requires_reply": false,
+      "content_sha256": "645c61e8aff1862c1f712f2a354eeeb79260b2566d7177a46921d9978670d735",
+      "content_preview": "已依雙方審核修正同一 draft.md 為第 2 版（sha256 716cfb4a…）。補齊[quoted passage omitted][quoted passage omitted]，共 331 個非空白、非 Markdown 標記",
+      "evidence_refs": []
+    }
+  },
+  {
+    "sequence": 1598,
+    "type": "agent.completed",
+    "at": "2026-09-28T15:26:21.865Z",
+    "data": {
+      "agent": "codex",
+      "run_id": "run_d73e798b-a42d-4f6f-ae04-3357df5cbce0",
+      "summary": "已將同一共享稿件修正為第 2 版，處理雙方全部阻斷問題，補齊「原則」與「限制」，篇幅符合要求。已重讀確認並通知同儕；本輪未提交審核，待雙方對第 2 版重新審核。"
+    }
+  },
+  {
+    "sequence": 1599,
+    "type": "agent.started",
+    "at": "2026-09-28T15:26:21.881Z",
+    "data": {
+      "agent": "claude",
+      "run_id": "run_85e2b0ed-f981-430f-af31-b876a92415c1",
+      "phase": "revision",
+      "session_id": "56679b85ed8ac83bddf4cb882111559f01e149af4f7c0505fa301cd189e40b07",
+      "retry": 0
+    }
+  },
+  {
+    "sequence": 1673,
+    "type": "artifact.updated",
+    "at": "2026-09-28T15:26:59.205Z",
+    "data": {
+      "name": "draft.md",
+      "base_version": 2,
+      "new_version": 3,
+      "author": "claude"
+    }
+  },
+  {
+    "sequence": 1703,
+    "type": "peer.message",
+    "at": "2026-09-28T15:27:15.933Z",
+    "data": {
+      "message_id": "msg_ae8a89c7-8032-4b8e-bfc1-7d183c1ab21c",
+      "from": "claude",
+      "to": "codex",
+      "type": "artifact_update",
+      "reply_to": "msg_bf17177e-95f1-4b03-93b5-6f985f7c6970",
+      "requires_reply": false,
+      "content_sha256": "5ea24ce4f37ecf1ec08af74a1c068dc2c14296d658239a49f42c19e77f75bda4",
+      "content_preview": "已獨立讀取第 2 版（sha256 716cfb4a…）。確認你的修訂已解決雙方第 1 版審核中列出的全部阻斷問題，我逐項覆核如下：\n\n- 衝突處理：已改為[quoted passage omitted]，正確。\n- 提交順序：已改為[qu",
+      "evidence_refs": []
+    }
+  },
+  {
+    "sequence": 1724,
+    "type": "agent.completed",
+    "at": "2026-09-28T15:27:29.105Z",
+    "data": {
+      "agent": "claude",
+      "run_id": "run_85e2b0ed-f981-430f-af31-b876a92415c1",
+      "summary": "修訂階段：讀取 draft.md v2（codex 修訂版），逐項覆核確認雙方 v1 審核的 6 項阻斷問題（衝突須拒絕寫入、提交順序不代表正確性、核准僅綁定受審版本、保證範圍、缺少「限制」節、篇幅不足）皆已解決，無殘留阻斷問題。自行計數 v2 本文約 282 字、含標題約 297 字，符合 250–400 要求。以 base_version=2 補一處真實缺口，產生 v3（sha256 207c"
+    }
+  },
+  {
+    "sequence": 1725,
+    "type": "agent.started",
+    "at": "2026-09-28T15:27:29.116Z",
+    "data": {
+      "agent": "codex",
+      "run_id": "run_0deacf22-07e8-418a-9f87-2f766cae09a1",
+      "phase": "review",
+      "session_id": "ceadfae9d5a959b30e82d48095f1faf43f9dace6bec5f76666e95c7b79b54f11",
+      "retry": 0
+    }
+  },
+  {
+    "sequence": 1757,
+    "type": "peer.message",
+    "at": "2026-09-28T15:27:49.143Z",
+    "data": {
+      "message_id": "msg_2dab7920-c69c-4f30-9818-ba0565cf4ae4",
+      "from": "codex",
+      "to": "claude",
+      "type": "answer",
+      "reply_to": "msg_ae8a89c7-8032-4b8e-bfc1-7d183c1ab21c",
+      "requires_reply": false,
+      "content_sha256": "4c9dd749ce64a4ec5fbf5386d0cdaf4db0158aed9975ecadd7feacf50dfb518f",
+      "content_preview": "已重讀目前第 3 版（sha256 207ce4a3…）並逐項審核。新增的整份稿件版本粒度說明，放在本稿的並行編輯情境中成立：即使文字錨點不同，基礎版本過期仍須拒絕。原子式檢查、重讀整合、內容正確性的限制，以及本協作流程的同版重審要求均正確",
+      "evidence_refs": []
+    }
+  },
+  {
+    "sequence": 1759,
+    "type": "review.submitted",
+    "at": "2026-09-28T15:27:49.150Z",
+    "data": {
+      "artifact_version": 3,
+      "verdict": "APPROVE",
+      "blocking_issues": [],
+      "required_changes": [],
+      "non_blocking_notes": [],
+      "confidence": "high",
+      "id": "review_3d7836a4-aebb-4988-85f7-0b84e4bc5ce3",
+      "collaboration_id": "collab_e9896544-a56c-4754-81c8-a2b121170a1b",
+      "agent": "codex",
+      "artifact_sha256": "207ce4a33e62fb30f7c1d982e8ac2ef8400d28c0c0d67176bd885e0f4f3561a1",
+      "code_sha256": null,
+      "created_at": "2026-09-28T15:27:49.149Z"
+    }
+  },
+  {
+    "sequence": 1783,
+    "type": "agent.completed",
+    "at": "2026-09-28T15:27:59.734Z",
+    "data": {
+      "agent": "codex",
+      "run_id": "run_0deacf22-07e8-418a-9f87-2f766cae09a1",
+      "summary": "已重讀並審核共享稿件第 3 版，確認先前錯誤皆已修正、必要章節齊備且篇幅符合要求，已提交 APPROVE。待同儕對同一版本完成審核；本輪未修改稿件。"
+    }
+  },
+  {
+    "sequence": 1784,
+    "type": "agent.started",
+    "at": "2026-09-28T15:27:59.747Z",
+    "data": {
+      "agent": "claude",
+      "run_id": "run_67ea6cff-022e-4d8a-b777-0cbb58adea2c",
+      "phase": "review",
+      "session_id": "56679b85ed8ac83bddf4cb882111559f01e149af4f7c0505fa301cd189e40b07",
+      "retry": 0
+    }
+  },
+  {
+    "sequence": 1828,
+    "type": "peer.message",
+    "at": "2026-09-28T15:28:21.086Z",
+    "data": {
+      "message_id": "msg_cef464ed-488a-42dc-aecf-017fc878cc48",
+      "from": "claude",
+      "to": "codex",
+      "type": "approval",
+      "reply_to": "msg_2dab7920-c69c-4f30-9818-ba0565cf4ae4",
+      "requires_reply": false,
+      "content_sha256": "d69dfc3f0438d7d3d5f4f6ffc7411bde0cabddc8f5168036f8a4ec405e9f77ac",
+      "content_preview": "已重讀第 3 版（sha256 207ce4a3…，與 quality gate 記錄的雜湊一致），逐句獨立覆核後與你結論一致，我對第 3 版提交 APPROVE，本輪不編輯。\n\n覆核結果：\n- [quoted passage omitte",
+      "evidence_refs": []
+    }
+  },
+  {
+    "sequence": 1859,
+    "type": "review.submitted",
+    "at": "2026-09-28T15:28:34.347Z",
+    "data": {
+      "artifact_version": 3,
+      "verdict": "APPROVE",
+      "blocking_issues": [],
+      "required_changes": [],
+      "non_blocking_notes": [
+        "第 3 版最後一次編輯由我（claude）在修訂階段以 base_version=2 提交；codex 已在其後獨立審核並 APPROVE 同一版本（sha256 207ce4a3…），雙方核准指向同一雜湊。",
+        "若後續任一方再編輯，這兩份核准均失效，須對新版本重新審核；我不打算再編輯。"
+      ],
+      "confidence": "high",
+      "id": "review_6f45b415-1c96-4a0d-b343-e7125c766650",
+      "collaboration_id": "collab_e9896544-a56c-4754-81c8-a2b121170a1b",
+      "agent": "claude",
+      "artifact_sha256": "207ce4a33e62fb30f7c1d982e8ac2ef8400d28c0c0d67176bd885e0f4f3561a1",
+      "code_sha256": null,
+      "created_at": "2026-09-28T15:28:34.346Z"
+    }
+  },
+  {
+    "sequence": 1883,
+    "type": "agent.completed",
+    "at": "2026-09-28T15:28:54.592Z",
+    "data": {
+      "agent": "claude",
+      "run_id": "run_67ea6cff-022e-4d8a-b777-0cbb58adea2c",
+      "summary": "審核階段：讀取 draft.md v3（sha256 207ce4a3…，與 quality gate 雜湊一致）並逐句獨立覆核，提交 APPROVE（blocking_issues 與 required_changes 皆為空，confidence high）。覆核依據：「原則」節流程正確完整（讀取取得版本 → 附 base_version 提交 → 原子式比對並寫入 → 相符遞增／不符拒絕並回"
+    }
+  },
+  {
+    "sequence": 1884,
+    "type": "collaboration.completed",
+    "at": "2026-09-28T15:28:54.599Z",
+    "data": {
+      "version": 3,
+      "sha256": "207ce4a33e62fb30f7c1d982e8ac2ef8400d28c0c0d67176bd885e0f4f3561a1"
+    }
+  }
+]

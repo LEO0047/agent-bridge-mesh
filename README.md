@@ -1,12 +1,16 @@
-# Agent Bridge
+# AgentBridgeMesh — Autonomous cross-agent collaboration between Codex, Claude Code, and beyond.
 
 A local, persistent Codex ↔ Claude Code collaboration runtime. Either agent can initiate a collaboration; both can research, ask questions, challenge conclusions, edit the same versioned report and review the exact same candidate. A deterministic coordinator manages the lifecycle. There is no third LLM and no UI automation.
+
+The project brand is **AgentBridgeMesh**; the installed command and MCP server remain `agent-bridge`. This release implements Codex and Claude Code. Other providers are future adapter work.
 
 ## Install
 
 Requirements: Node.js 22.13+, Git, authenticated `codex` and `claude` CLIs. Report mode uses the providers' existing login; no API key is copied into Bridge. Sandboxed coding tests currently require macOS.
 
 ```sh
+git clone https://github.com/LEO0047/agent-bridge-mesh.git
+cd agent-bridge-mesh
 npm ci
 npm run build
 npm test
@@ -29,6 +33,8 @@ agent-bridge watch <collaboration-id>
 ```
 
 The initial desktop/CLI chat is the entry point. Bridge creates its own persistent Codex thread and Claude session; it does **not** impersonate or hijack an existing interactive chat. Those two managed session IDs are reused across turns and daemon restarts.
+
+繁體中文使用方式請看 [操作指南](docs/USAGE.zh-TW.md)。
 
 ## Architecture
 
@@ -139,6 +145,7 @@ Model choice defaults to each CLI's configured default. Optional `agents.codex.m
 npm test             # state, concurrency, lifecycle, failures, coding isolation
 npm run build
 npm run test:live    # real memory-architecture report; consumes provider usage
+npm run test:live:coding # real isolated bug fix; consumes provider usage
 ```
 
 See [acceptance evidence](docs/ACCEPTANCE.md) for the specific verified release, real message traces and final artifact hashes. Mock tests and live acceptance are reported separately.

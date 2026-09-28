@@ -1,0 +1,77 @@
+{
+  "label": "versioning",
+  "collaboration_id": "collab_570e751f-6f02-41e0-acd3-6d9a45a519cb",
+  "status": "completed",
+  "initiator": "codex",
+  "final_version": 2,
+  "final_sha256": "acdc6da4639d31ded5d4c1c744ab670baa683f1ea24f5abb43498313f709c2d7",
+  "public_copy_sha256": "acdc6da4639d31ded5d4c1c744ab670baa683f1ea24f5abb43498313f709c2d7",
+  "session_fingerprints": [
+    {
+      "agent": "codex",
+      "sha256": "6ea6e20b8abd400efe65af48e3d1b0f958db660a311958f715fe3d7ff7b75062"
+    },
+    {
+      "agent": "claude",
+      "sha256": "53cbc4a9d17fecdce26e7d41bb33c13df923fdacd6d6c58afab98bb863d99593"
+    }
+  ],
+  "session_reuse": [
+    {
+      "agent": "codex",
+      "distinct_resumed_ids": 1
+    },
+    {
+      "agent": "claude",
+      "distinct_resumed_ids": 1
+    }
+  ],
+  "models": [
+    "claude-opus-5[1m]"
+  ],
+  "total_agent_runs": 22,
+  "messages": 16,
+  "directions": {
+    "codex_to_claude": 9,
+    "claude_to_codex": 7
+  },
+  "draft_authors": [
+    "codex",
+    "claude"
+  ],
+  "draft_versions": 2,
+  "review_verdicts": [
+    {
+      "agent": "codex",
+      "version": 2,
+      "verdict": "APPROVE",
+      "artifact_sha256": "acdc6da4639d31ded5d4c1c744ab670baa683f1ea24f5abb43498313f709c2d7",
+      "code_sha256": null
+    },
+    {
+      "agent": "claude",
+      "version": 2,
+      "verdict": "APPROVE",
+      "artifact_sha256": "acdc6da4639d31ded5d4c1c744ab670baa683f1ea24f5abb43498313f709c2d7",
+      "code_sha256": null
+    },
+    {
+      "agent": "codex",
+      "version": 2,
+      "verdict": "APPROVE",
+      "artifact_sha256": "acdc6da4639d31ded5d4c1c744ab670baa683f1ea24f5abb43498313f709c2d7",
+      "code_sha256": null
+    },
+    {
+      "agent": "claude",
+      "version": 2,
+      "verdict": "APPROVE",
+      "artifact_sha256": "acdc6da4639d31ded5d4c1c744ab670baa683f1ea24f5abb43498313f709c2d7",
+      "code_sha256": null
+    }
+  ],
+  "evidence": [],
+  "disagreements": [],
+  "code_test": null,
+  "integrated_sha": null
+}

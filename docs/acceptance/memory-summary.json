@@ -1,0 +1,233 @@
+{
+  "label": "memory",
+  "collaboration_id": "collab_781cfc3c-7f7e-4cdd-a02e-7970b7835ac6",
+  "status": "completed",
+  "initiator": "codex",
+  "final_version": 8,
+  "final_sha256": "5802c5cc9000af81994b2f9c02095630eda5f416f7e5ef15b3ab22eeb0873d6f",
+  "public_copy_sha256": "5802c5cc9000af81994b2f9c02095630eda5f416f7e5ef15b3ab22eeb0873d6f",
+  "session_fingerprints": [
+    {
+      "agent": "codex",
+      "sha256": "e70b699422dce9aba935857d20d28ce8f711dcb09298c70b6b4e18b2633aa332"
+    },
+    {
+      "agent": "claude",
+      "sha256": "624eb6f5ad5486dd2cce84acd7153d1fb37d025e4b337a947a527816b3c54dc6"
+    }
+  ],
+  "session_reuse": [
+    {
+      "agent": "codex",
+      "distinct_resumed_ids": 1
+    },
+    {
+      "agent": "claude",
+      "distinct_resumed_ids": 1
+    }
+  ],
+  "models": [
+    "claude-opus-5[1m]",
+    "gpt-6-astra"
+  ],
+  "total_agent_runs": 15,
+  "messages": 18,
+  "directions": {
+    "codex_to_claude": 11,
+    "claude_to_codex": 7
+  },
+  "draft_authors": [
+    "claude",
+    "codex"
+  ],
+  "draft_versions": 8,
+  "review_verdicts": [
+    {
+      "agent": "codex",
+      "version": 8,
+      "verdict": "APPROVE",
+      "artifact_sha256": "5802c5cc9000af81994b2f9c02095630eda5f416f7e5ef15b3ab22eeb0873d6f",
+      "code_sha256": null
+    },
+    {
+      "agent": "codex",
+      "version": 8,
+      "verdict": "APPROVE",
+      "artifact_sha256": "5802c5cc9000af81994b2f9c02095630eda5f416f7e5ef15b3ab22eeb0873d6f",
+      "code_sha256": null
+    },
+    {
+      "agent": "claude",
+      "version": 8,
+      "verdict": "APPROVE",
+      "artifact_sha256": "5802c5cc9000af81994b2f9c02095630eda5f416f7e5ef15b3ab22eeb0873d6f",
+      "code_sha256": null
+    }
+  ],
+  "evidence": [
+    {
+      "id": "evidence_90d6a858-af58-41e5-8ae5-5a2ee4aab40a",
+      "source": "https://git-scm.com/book/en/v2/Git-Internals-Git-Objects",
+      "retrieved_by": "codex",
+      "verified_by": null
+    },
+    {
+      "id": "evidence_335b4b48-13bc-4cf4-9924-c3de9591cc69",
+      "source": "https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/removing-sensitive-data-from-a-repository",
+      "retrieved_by": "codex",
+      "verified_by": null
+    },
+    {
+      "id": "evidence_879dedc4-21b9-4ebe-8e23-9c9f35f9f6c8",
+      "source": "https://www.sqlite.org/wal.html",
+      "retrieved_by": "codex",
+      "verified_by": null
+    },
+    {
+      "id": "evidence_c2f9c946-379d-4d03-868b-f0c87b5cf06e",
+      "source": "https://www.sqlite.org/whentouse.html",
+      "retrieved_by": "codex",
+      "verified_by": "claude"
+    },
+    {
+      "id": "evidence_2e881a28-6abc-4774-a68d-6f781b21b147",
+      "source": "https://www.sqlite.org/fts5.html",
+      "retrieved_by": "codex",
+      "verified_by": null
+    },
+    {
+      "id": "evidence_0caf5f9a-9efb-4c1c-b444-59b401f426be",
+      "source": "https://learn.microsoft.com/en-us/azure/architecture/patterns/event-sourcing",
+      "retrieved_by": "codex",
+      "verified_by": "claude"
+    },
+    {
+      "id": "evidence_6382ba2c-aca6-4f91-8040-0d97d8a7db15",
+      "source": "https://www.postgresql.org/docs/current/ddl-rowsecurity.html",
+      "retrieved_by": "codex",
+      "verified_by": "claude"
+    },
+    {
+      "id": "evidence_c31eb43d-cfc1-46e5-853a-898378573455",
+      "source": "https://docs.aws.amazon.com/prescriptive-guidance/latest/cloud-design-patterns/transactional-outbox.html",
+      "retrieved_by": "codex",
+      "verified_by": null
+    },
+    {
+      "id": "evidence_f1854c70-0c97-42a6-b5aa-602716fd8a4f",
+      "source": "https://www.sqlite.org/backup.html",
+      "retrieved_by": "codex",
+      "verified_by": null
+    },
+    {
+      "id": "evidence_f7d3e59d-e67e-4959-a45f-57d79a8e7c6e",
+      "source": "https://www.sqlite.org/pragma.html#pragma_secure_delete",
+      "retrieved_by": "codex",
+      "verified_by": "claude"
+    },
+    {
+      "id": "evidence_232cf699-675c-4963-815c-3db7c7adf303",
+      "source": "https://github.com/pgvector/pgvector",
+      "retrieved_by": "claude",
+      "verified_by": "codex"
+    },
+    {
+      "id": "evidence_4f01a28d-93a6-47d5-8839-aed928ba96d3",
+      "source": "https://platform.claude.com/docs/en/agents-and-tools/tool-use/memory-tool",
+      "retrieved_by": "claude",
+      "verified_by": "codex"
+    },
+    {
+      "id": "evidence_b661128a-41d4-4c18-ac64-3cc9d23e05d4",
+      "source": "https://qdrant.tech/documentation/concepts/indexing/",
+      "retrieved_by": "claude",
+      "verified_by": "codex"
+    },
+    {
+      "id": "evidence_a4ee91dd-c2d5-44c3-bbb5-18fa1b410ac4",
+      "source": "https://www.sqlite.org/fts5.html",
+      "retrieved_by": "claude",
+      "verified_by": "codex"
+    },
+    {
+      "id": "evidence_20fa28a2-40c1-4737-81b2-4a3a246aaf7e",
+      "source": "https://neo4j.com/docs/cypher-manual/current/indexes/semantic-indexes/vector-indexes/",
+      "retrieved_by": "claude",
+      "verified_by": "codex"
+    },
+    {
+      "id": "evidence_c5e9aee5-9550-4d0f-8a80-565b2958dc64",
+      "source": "https://ico.org.uk/for-organisations/uk-gdpr-guidance-and-resources/individual-rights/individual-rights/right-to-erasure/",
+      "retrieved_by": "claude",
+      "verified_by": "codex"
+    },
+    {
+      "id": "evidence_cb66db5e-90e6-40f7-8a87-bf80c44dad9f",
+      "source": "https://platform.claude.com/docs/en/build-with-claude/context-editing",
+      "retrieved_by": "claude",
+      "verified_by": "codex"
+    },
+    {
+      "id": "evidence_9cc5329d-436a-4cee-bf02-242fa7882910",
+      "source": "https://www.w3.org/TR/rdf11-concepts/",
+      "retrieved_by": "claude",
+      "verified_by": "codex"
+    },
+    {
+      "id": "evidence_e4f3dca0-cdcc-4f73-b9ab-ab8fd329d87a",
+      "source": "https://modelcontextprotocol.io/specification/2025-06-18/basic/authorization",
+      "retrieved_by": "claude",
+      "verified_by": "codex"
+    },
+    {
+      "id": "evidence_3a4c0807-7892-4a41-a4d7-ce91e9a4b1b9",
+      "source": "https://qdrant.tech/documentation/manage-data/points/",
+      "retrieved_by": "claude",
+      "verified_by": null
+    },
+    {
+      "id": "evidence_c7763479-3b9b-4dc1-9746-fca3781e4034",
+      "source": "https://www.w3.org/TR/rdf11-concepts/#section-dataset",
+      "retrieved_by": "codex",
+      "verified_by": null
+    },
+    {
+      "id": "evidence_4c2e20cf-af98-4153-9563-e2af50a58bf7",
+      "source": "https://learn.microsoft.com/en-us/azure/architecture/patterns/event-sourcing",
+      "retrieved_by": "claude",
+      "verified_by": "codex"
+    },
+    {
+      "id": "evidence_9c919e13-27a8-420a-998e-3a792bf7c741",
+      "source": "https://github.com/pgvector/pgvector#multitenancy",
+      "retrieved_by": "claude",
+      "verified_by": "codex"
+    },
+    {
+      "id": "evidence_1ff57326-13f8-493d-b2ee-141b220016b3",
+      "source": "https://www.postgresql.org/docs/current/ddl-rowsecurity.html",
+      "retrieved_by": "claude",
+      "verified_by": null
+    },
+    {
+      "id": "evidence_9b5c9ec0-9c61-4308-9a5e-a6829b9929c4",
+      "source": "https://qdrant.tech/documentation/manage-data/points/",
+      "retrieved_by": "codex",
+      "verified_by": "claude"
+    }
+  ],
+  "disagreements": [
+    {
+      "id": "disagreement_3f7070e9-10f4-440e-b5cd-07884bea9ddc",
+      "status": "merged",
+      "topic": "ANN 後的精確權限過濾是否構成隔離錯誤"
+    },
+    {
+      "id": "disagreement_6b01a9b1-fce4-4e0c-bb4f-618caafc0d80",
+      "status": "resolved_codex",
+      "topic": "RDF named graph 是否內建來源追溯語意"
+    }
+  ],
+  "code_test": null,
+  "integrated_sha": null
+}

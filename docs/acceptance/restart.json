@@ -1,0 +1,36 @@
+[
+  {
+    "collaboration_id": "collab_781cfc3c-7f7e-4cdd-a02e-7970b7835ac6",
+    "phase_before": "analysis",
+    "phase_after": "analysis",
+    "sessions": [
+      {
+        "agent": "codex",
+        "fingerprint": "e70b699422dce9aba935857d20d28ce8f711dcb09298c70b6b4e18b2633aa332",
+        "same_after_restart": true
+      },
+      {
+        "agent": "claude",
+        "fingerprint": "624eb6f5ad5486dd2cce84acd7153d1fb37d025e4b337a947a527816b3c54dc6",
+        "same_after_restart": true
+      }
+    ]
+  },
+  {
+    "collaboration_id": "collab_79232b93-66b6-4ab6-a862-29a6d6bc24f7",
+    "phase_before": "analysis",
+    "phase_after": "analysis",
+    "sessions": [
+      {
+        "agent": "claude",
+        "fingerprint": "2ff0644c57a7662aa7a584e3c9d2af083183e5af19436cca41af5be1e07644e0",
+        "same_after_restart": true
+      },
+      {
+        "agent": "codex",
+        "fingerprint": "8fffd97feb3f44b94019e70c58695daec1614914664f4766e066e6ef62709c3b",
+        "same_after_restart": true
+      }
+    ]
+  }
+]

@@ -53,7 +53,7 @@ export class Worktrees {
   }
   commit(work: any, agent: Agent) {
     const cwd = work.paths[agent];
-    git(cwd, ['add', '--all']);
+    git(cwd, ['add', '--all', '--', '.', ':(exclude).bridge-tmp']);
     if (git(cwd, ['diff', '--cached', '--name-only']))
       git(cwd, ['commit', '-m', `Agent Bridge: ${agent} contribution`]);
     return git(cwd, ['rev-parse', 'HEAD']);

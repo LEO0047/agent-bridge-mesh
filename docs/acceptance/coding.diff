@@ -1,0 +1,54 @@
+diff --git a/range.js b/range.js
+index c62e6b1..9c555e5 100644
+--- a/range.js
++++ b/range.js
+@@ -1 +1 @@
+-export function clamp(value, min, max) { return Math.max(max, Math.min(min, value)); }
++export function clamp(value, min, max) { return Math.min(max, Math.max(min, value)); }
+diff --git a/range.test.js b/range.test.js
+index 2125404..115174c 100644
+--- a/range.test.js
++++ b/range.test.js
+@@ -1 +1,41 @@
+-import {test} from 'node:test';import assert from 'node:assert/strict';import {clamp} from './range.js';test('keeps an in-range value',()=>assert.equal(clamp(5,0,10),5));
++import {test} from 'node:test';
++import assert from 'node:assert/strict';
++import {clamp} from './range.js';
++
++// 前置條件：呼叫端保證 min <= max，因此這裡不測 min > max。
++
++test('keeps an in-range value', () => {
++  assert.equal(clamp(5, 0, 10), 5);
++  // 非整數：確保實作原樣回傳 value，而非任何取整／截斷後的近似值。
++  assert.equal(clamp(0.5, 0, 10), 0.5);
++  assert.equal(clamp(9.75, 0, 10), 9.75);
++});
++
++test('raises a value below the lower bound', () => {
++  assert.equal(clamp(-3, 0, 10), 0);
++  assert.equal(clamp(-1000, 0, 10), 0);
++});
++
++test('lowers a value above the upper bound', () => {
++  assert.equal(clamp(99, 0, 10), 10);
++  assert.equal(clamp(1000, 0, 10), 10);
++});
++
++test('returns the bounds themselves unchanged', () => {
++  assert.equal(clamp(0, 0, 10), 0);
++  assert.equal(clamp(10, 0, 10), 10);
++});
++
++test('clamps inside a fully negative range', () => {
++  assert.equal(clamp(-7, -10, -1), -7);
++  assert.equal(clamp(-20, -10, -1), -10);
++  assert.equal(clamp(0, -10, -1), -1);
++  assert.equal(clamp(-10, -10, -1), -10);
++  assert.equal(clamp(-1, -10, -1), -1);
++  assert.equal(clamp(-7.5, -10, -1), -7.5);
++});
++
++test('handles a degenerate range where min equals max', () => {
++  assert.equal(clamp(5, 3, 3), 3);
++  assert.equal(clamp(1, 3, 3), 3);
++});
