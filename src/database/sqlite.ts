@@ -26,6 +26,7 @@ export class Store {
       'disagreements',
       'decisions',
       'runs',
+      'test_runs',
       'evidence',
       'comments',
     ])
