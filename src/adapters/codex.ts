@@ -104,7 +104,12 @@ export class CodexAdapter implements Adapter {
                 id: msg.id,
                 result: {
                   success: true,
-                  contentItems: [{ type: 'inputText', text: JSON.stringify(value) }],
+                  contentItems: [
+                    {
+                      type: 'inputText',
+                      text: typeof value === 'string' ? value : JSON.stringify(value),
+                    },
+                  ],
                 },
               });
             } catch (e) {

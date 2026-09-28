@@ -24,7 +24,11 @@ export async function mcp(config: Config, agent?: string) {
             args: rest,
             collaboration_id,
           });
-          return { content: [{ type: 'text', text: JSON.stringify(value) }] };
+          return {
+            content: [
+              { type: 'text', text: typeof value === 'string' ? value : JSON.stringify(value) },
+            ],
+          };
         } catch (e) {
           return { isError: true, content: [{ type: 'text', text: String(e) }] };
         }
