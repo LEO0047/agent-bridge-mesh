@@ -3,7 +3,7 @@ import { recoverOrphan } from './adapters/process.js';
 import { randomBytes } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { Service } from './service.js';
+import { Service, TestRuns } from './service.js';
 import { id, now, hash } from './database/sqlite.js';
 import { peer, type Agent } from './messaging/protocol.js';
 import { runTests } from './tasks/test-runner.js';
@@ -32,6 +32,13 @@ export class Engine {
       if (r.status === 'running') {
         if (r.pid && r.process_identity) recoverOrphan(r.pid, r.process_identity);
         this.service.db.put('runs', { ...r, status: 'interrupted', ended_at: now() });
+      }
+    // Detached test children survive a killed Bridge; recoverOrphan only signals a process
+    // group whose birth identity still matches, so a recycled PID is left alone.
+    for (const t of this.service.db.all('test_runs'))
+      if (t.status === 'running') {
+        if (t.pid && t.process_identity) recoverOrphan(t.pid, t.process_identity);
+        this.service.db.put('test_runs', { ...t, status: 'interrupted', ended_at: now() });
       }
     for (const a of this.service.db.all('artifacts'))
       this.service.artifacts.export(a.collaboration_id, a.name, a.content);
@@ -299,7 +306,7 @@ export class Engine {
           const test =
             v.integrated_sha === integration.sha && v.code_test?.passed
               ? { ...v.code_test, reused: true }
-              : await runTests(integration.path, v.test_command, signal);
+              : await runTests(integration.path, v.test_command, signal, new TestRuns(s.db, c));
           try {
             assertIntegratedSnapshot(v.work, integration.sha!);
           } catch (e) {
