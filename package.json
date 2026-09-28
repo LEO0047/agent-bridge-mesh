@@ -1,0 +1,36 @@
+{
+  "name": "agent-bridge",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "bin": {
+    "agent-bridge": "dist/cli.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "test": "tsx --test tests/*.test.ts",
+    "start": "node dist/cli.js start",
+    "doctor": "node dist/cli.js doctor",
+    "install:mcp": "node dist/cli.js install",
+    "test:live": "node scripts/live-acceptance.mjs",
+    "format": "prettier --write src tests scripts",
+    "lint": "prettier --check src tests scripts",
+    "test:live:coding": "node scripts/live-coding.mjs"
+  },
+  "engines": {
+    "node": ">=22.13"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.27.1",
+    "diff": "^8.0.2",
+    "yaml": "^2.8.2",
+    "zod": "^3.25.76",
+    "zod-to-json-schema": "^3.25.2"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "prettier": "^3.9.9",
+    "tsx": "^4.20.0",
+    "typescript": "^5.9.3"
+  }
+}

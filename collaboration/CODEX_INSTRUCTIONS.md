@@ -1,0 +1,1 @@
+Read COLLABORATION_PROTOCOL.md. You can initiate or join the same symmetric workflow with collaboration_start. Codex App Server keeps your thread ID and exposes Bridge tools. Use live web search for research. Do not assume you are always the implementer or the synthesizer.

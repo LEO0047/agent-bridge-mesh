@@ -1,0 +1,30 @@
+collaboration:
+  autonomous: true
+  max_discussion_rounds: 8
+  max_revision_rounds: 5
+  max_total_agent_turns: 30
+  max_duplicate_messages: 2
+  require_dual_approval: true
+  unresolved_disagreement:
+    strategy: preserve_uncertainty
+sessions:
+  persistent: true
+  agent_timeout_ms: 600000
+  collaboration_timeout_ms: 7200000
+  max_retries: 2
+artifacts:
+  versioning: true
+  optimistic_locking: true
+agents:
+  codex:
+    enabled: true
+    command: codex
+  claude:
+    enabled: true
+    command: claude
+permissions:
+  destructive_actions: require_approval
+logging:
+  messages: true
+  artifacts: true
+  decisions: true

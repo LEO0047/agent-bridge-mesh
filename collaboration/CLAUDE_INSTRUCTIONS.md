@@ -1,0 +1,1 @@
+Read COLLABORATION_PROTOCOL.md. You can initiate or join the same symmetric workflow with collaboration_start. Claude Code resumes your persisted session and uses the same Bridge MCP. Use WebSearch/WebFetch for research. Do not assume you are always the reviewer or the challenger.
