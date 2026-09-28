@@ -1,0 +1,92 @@
+{
+  "label": "self-hosting",
+  "collaboration_id": "collab_9d2f83fd-bc93-45a6-99b0-9bff1440697a",
+  "status": "completed",
+  "initiator": "claude",
+  "final_version": 7,
+  "final_sha256": "21b06d860e40bd3e0f2bf74700552c439464871601a63002cb01e4ca729bebb8",
+  "public_copy_sha256": "21b06d860e40bd3e0f2bf74700552c439464871601a63002cb01e4ca729bebb8",
+  "session_fingerprints": [
+    {
+      "agent": "claude",
+      "sha256": "155f7cd8976d27c42634e000162edbbba188ad5d2e4ec57d2296bda4de154128"
+    },
+    {
+      "agent": "codex",
+      "sha256": "a54852cb3d57ee2221821dd93e1db448220661cec96a2559045f9a6849f2d218"
+    }
+  ],
+  "session_reuse": [
+    {
+      "agent": "claude",
+      "distinct_resumed_ids": 1
+    },
+    {
+      "agent": "codex",
+      "distinct_resumed_ids": 1
+    }
+  ],
+  "models": [
+    "claude-opus-5[1m]",
+    "gpt-6-astra"
+  ],
+  "total_agent_runs": 13,
+  "messages": 22,
+  "directions": {
+    "codex_to_claude": 14,
+    "claude_to_codex": 8
+  },
+  "draft_authors": [
+    "claude",
+    "codex"
+  ],
+  "draft_versions": 7,
+  "review_verdicts": [
+    {
+      "agent": "claude",
+      "version": 7,
+      "verdict": "APPROVE",
+      "artifact_sha256": "21b06d860e40bd3e0f2bf74700552c439464871601a63002cb01e4ca729bebb8",
+      "code_sha256": "130f7527db1ba905bb8f287e283b400f846473f9"
+    },
+    {
+      "agent": "codex",
+      "version": 7,
+      "verdict": "APPROVE",
+      "artifact_sha256": "21b06d860e40bd3e0f2bf74700552c439464871601a63002cb01e4ca729bebb8",
+      "code_sha256": "130f7527db1ba905bb8f287e283b400f846473f9"
+    }
+  ],
+  "evidence": [
+    {
+      "id": "evidence_964bd47b-f27b-4c4c-94f3-4d66012c169d",
+      "source": "https://nodejs.org/api/child_process.html",
+      "retrieved_by": "claude",
+      "verified_by": "codex"
+    },
+    {
+      "id": "evidence_522bafe9-bad3-4f05-949e-810ce0f79156",
+      "source": "https://man7.org/linux/man-pages/man2/kill.2.html",
+      "retrieved_by": "claude",
+      "verified_by": "codex"
+    },
+    {
+      "id": "evidence_de50c6dc-3bf4-4ca3-9532-2381113b3189",
+      "source": "https://keith.github.io/xcode-man-pages/sandbox_init.3.html",
+      "retrieved_by": "claude",
+      "verified_by": "codex"
+    }
+  ],
+  "disagreements": [
+    {
+      "id": "disagreement_7859d0c3-1cc9-43ad-86b5-17dce6fa79c4",
+      "status": "resolved_codex",
+      "topic": "test PID 身分須跨 sandbox-exec 的 exec 保持穩定"
+    }
+  ],
+  "code_test": {
+    "passed": true,
+    "exit_code": 0
+  },
+  "integrated_sha": "130f7527db1ba905bb8f287e283b400f846473f9"
+}

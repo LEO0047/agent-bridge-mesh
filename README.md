@@ -81,7 +81,7 @@ Evidence verification is a recorded independent agent assessment with provenance
 
 SQLite is authoritative. The default is `~/.local/state/agent-bridge/bridge.sqlite` with WAL, transactions and a busy timeout. This keeps the database off iCloud/network filesystems. Set `AGENT_BRIDGE_STATE` to another **local** path if necessary. Set `AGENT_BRIDGE_ROOT` when invoking a different installation.
 
-The database has indexed records and named SQL views for collaborations, agents, sessions, tasks, messages, artifacts, artifact_versions, reviews, disagreements, decisions, runs and evidence; events and leases are physical tables. This deliberately avoids an ORM and dozens of redundant repositories.
+The database has indexed records and named SQL views for collaborations, agents, sessions, tasks, messages, artifacts, artifact_versions, reviews, disagreements, decisions, runs, test_runs and evidence; events and leases are physical tables. This deliberately avoids an ORM and dozens of redundant repositories.
 
 ```text
 artifacts/<collaboration-id>/
@@ -107,7 +107,7 @@ agent-bridge new --mode collaborative_coding --repository /absolute/clean/repo \
 
 Requires a clean committed repository. Bridge creates Codex, Claude and integration worktrees with `codex/bridge-*` branches. Agents can read peer files/diffs but write only their own tree. Bridge commits their contributions and merges into the integration tree; conflicts remain explicit and are resolved through a restricted conflict tool. The original checkout is not changed. Git hooks are disabled for Bridge's Git operations.
 
-Tests run in a macOS Seatbelt sandbox with no network, no credential environment, and reads/writes scoped to runtime/system files and the selected worktree. Default: `node --test`; MCP callers can supply a pre-authorized `test_command` when creating the collaboration. The candidate is the integrated commit plus draft version; reviews refer to both. Worktrees are retained for inspection and deliberate adoption. No push, production deployment or destructive cleanup occurs automatically.
+Tests run in a macOS Seatbelt sandbox with signals limited to the same sandbox, no network, no credential environment, and reads/writes scoped to runtime/system files and the selected worktree. Default: `node --test`; MCP callers can supply a pre-authorized `test_command` when creating the collaboration. The candidate is the integrated commit plus draft version; reviews refer to both. Worktrees are retained for inspection and deliberate adoption. No push, production deployment or destructive cleanup occurs automatically.
 
 ## Controls and observability
 

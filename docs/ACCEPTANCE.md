@@ -8,7 +8,7 @@ The real provider runs below used authenticated Codex and Claude Code sessions o
 - Codex: `0.158.0-alpha.2.1`, official App Server JSON-RPC, persistent thread/resume, experimental dynamic tools. Recorded model: `gpt-6-astra`.
 - Claude Code: `2.1.275`, official non-interactive streamed CLI, persistent `--resume`, scoped Bridge MCP. Recorded model: `claude-opus-5[1m]` (message model `claude-opus-5`).
 - Existing official logins were used. No API key, login identity, raw provider session ID or authentication file is published.
-- Installer registered `agent-bridge` with both clients. Doctor: **12 PASS**. An independent MCP client listed **47 tools** and read completed collaboration state. [Doctor results](acceptance/doctor.json)
+- Installer registered `agent-bridge` with both clients. Doctor: **12 PASS**. An independent MCP client listed **47 tools** and read completed collaboration state after the final daemon restart. [MCP check](acceptance/mcp.json) [Doctor results](acceptance/doctor.json)
 
 The earliest versioning smoke included adapter configuration failures before they were corrected. Runs also include development-time daemon restarts. Traces intentionally retain failures; these are development acceptance histories, not a claim that every turn executed the final release build. Completed artifacts were checked again against the release's current quality gate.
 
@@ -23,6 +23,7 @@ Message counts are Codex → Claude / Claude → Codex. Every completed scenario
 | hardware | claude | 12 / 7 | v8 | [report](acceptance/hardware-final.md) · [trace](acceptance/hardware-trace.json) |
 | coding | claude | 13 / 15 | v7 | [report](acceptance/coding-final.md) · [trace](acceptance/coding-trace.json) |
 | review-regression | codex | 3 / 3 | v3 | [report](acceptance/review-regression-final.md) · [trace](acceptance/review-regression-trace.json) |
+| self-hosting | claude | 14 / 8 | v7 | [report](acceptance/self-hosting-final.md) · [trace](acceptance/self-hosting-trace.json) |
 
 Full hashes, session fingerprints, distinct resumed-session counts, evidence provenance, disagreements and verdict history are in [summary.json](acceptance/summary.json). In each scenario each agent reused one provider session across turns. The [restart comparison](acceptance/restart.json) records matching session fingerprints before and after a real daemon stop/start during the memory and hardware tasks.
 
@@ -33,11 +34,21 @@ Full hashes, session fingerprints, distinct resumed-session counts, evidence pro
 - **Coding fixture:** an intentionally seeded reversed-bound clamp bug initially failed. Codex changed the implementation; Claude contributed six boundary/negative-range tests in another worktree. Integrated tests passed 6/6. Review returned REVISE when the report still claimed integration was pending, causing another shared edit and review. Original checkout remained unchanged. [Integrated diff](acceptance/coding.diff)
 - **Review regression:** a deliberately incorrect candidate and missing required section were seeded directly at review. Real agents both returned REVISE, revised the artifact, then approved v3. This is a **synthetic regression input with real providers**, not an organically discovered research error. The two research reports above converged through peer editing and received APPROVE at their final review; they are not mislabeled as REVISE scenarios.
 
+### Joint development on AgentBridgeMesh itself
+
+After the base runtime was usable, Claude implemented persistent test-child registration and restart cleanup in AgentBridgeMesh itself. Codex challenged the executable-name identity assumption, contributed 18 regression tests, reviewed the implementation, and edited the same report. Both approved report v7 and integrated commit `130f7527db1ba905bb8f287e283b400f846473f9`. [Integrated source diff](acceptance/self-hosting.diff)
+
+The live worktree tests initially failed because the outer test sandbox denied OS operations (the probe specifically observed `spawnSync ps EPERM`; a Git fixture also could not load its Xcode runtime). The peers kept the production sandbox in place and replaced only OS process/Git boundaries in the regression tests. Actual Store reopening, registry, Service/Engine wiring, snapshot gate, cancellation/timeout and verdict behavior ran. That 18-test result is not described as a real kernel-process kill test.
+
+The primary maintainer independently added a narrowly scoped same-sandbox signal permission and two real-process acceptance tests. One confirms test children can be terminated while positive-PID and process-group signals to an external owned process are denied. The other SIGKILLs a fixture parent running the production test runner, confirms its silent detached test survives, reopens SQLite, calls the real Engine recovery path, and observes that test process terminate. These tests pass in the final 52-test suite on all three local Node versions. The same-sandbox signal change does not claim to make `ps` available inside the outer sandbox. Provider peer review was on the integration commit above; subsequent maintainer changes and full release validation are attributed separately.
+
+Test processes use separate `test_runs` records so they cannot corrupt agent retries or fallback selection. Recovery compares PID with process birth time and UID; executable changes do not invalidate that identity. Limits remain: `ps` birth time is second-resolution, identity lookup and signal delivery are not atomic, unknown/old-format identities fail closed, a child can escape its original process group, and a SIGKILL in the spawn-to-registration window cannot be recovered from an absent record. `interrupted` records an attempted recovery decision, not proof every descendant exited. This is local process recovery, not a hostile multi-user resource-containment service.
+
 The exported trace includes message directions, reply IDs, version changes, review verdicts, failures and completion events. Peer-message text is a short excerpt with quoted passages removed; full content hashes preserve correspondence. Complete original Agent-to-Agent messages are retained privately and available with `agent-bridge messages <id>` or in SQLite. Raw provider streams and private paths are not public evidence artifacts.
 
 ## Automated coverage
 
-The local suite initially passed **32 tests**, with no skipped tests on macOS. It contains real SQLite, daemon/socket and Git worktree tests alongside deterministic fake-agent lifecycle tests. It does not represent fake-agent calls as live model acceptance.
+The final local suite passed **52/52 tests**, with no skipped tests, on Node **22.23.3**, **24.21.0**, and the local Node **26.8.0-alpha.0.0.0**, all on macOS. Build and formatting checks passed. [Machine-readable checks](acceptance/checks.json) It contains real SQLite, daemon/socket and Git worktree tests alongside deterministic fake-agent lifecycle tests. It does not represent fake-agent calls as live model acceptance.
 
 | Required behavior | Automated evidence | Real evidence |
 |---|---|---|

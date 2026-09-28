@@ -1,0 +1,39 @@
+{
+  "recorded_at": "2026-09-28T16:23:52.202620+00:00",
+  "build": "PASS",
+  "format": "PASS",
+  "local_test_matrix": [
+    {
+      "node": "22.23.3",
+      "tests": 52,
+      "pass": 52,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "node": "24.21.0",
+      "tests": 52,
+      "pass": 52,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "node": "26.8.0-alpha.0.0.0",
+      "tests": 52,
+      "pass": 52,
+      "fail": 0,
+      "skipped": 0
+    }
+  ],
+  "doctor_pass": 12,
+  "mcp_tools": 47,
+  "live_collaborations_completed": 6,
+  "known_production_dependency_vulnerabilities": {
+    "info": 0,
+    "low": 0,
+    "moderate": 0,
+    "high": 0,
+    "critical": 0,
+    "total": 0
+  }
+}

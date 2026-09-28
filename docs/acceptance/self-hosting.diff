@@ -1,0 +1,871 @@
+diff --git a/src/adapters/process.ts b/src/adapters/process.ts
+index 32b43a9..0d5beb3 100644
+--- a/src/adapters/process.ts
++++ b/src/adapters/process.ts
+@@ -1,11 +1,15 @@
+ import { spawnSync, type ChildProcess } from 'node:child_process';
+ 
++// Identity must rely only on birth attributes the process cannot change about itself.
++// comm is unusable: a launcher such as sandbox-exec replaces its image with the target
++// executable, so the value read just after spawn may not be the value read at recovery.
+ export function processIdentity(pid: number) {
+-  const result = spawnSync('ps', ['-p', String(pid), '-o', 'lstart=', '-o', 'comm='], {
++  const result = spawnSync('ps', ['-p', String(pid), '-o', 'lstart=', '-o', 'uid='], {
+     encoding: 'utf8',
+     timeout: 2000,
+   });
+-  return result.status === 0 ? result.stdout.trim() : null;
++  const identity = result.stdout?.trim().replace(/\s+/g, ' ');
++  return result.status === 0 && identity ? identity : null;
+ }
+ 
+ export function killGroup(child: ChildProcess, signal: NodeJS.Signals) {
+@@ -23,6 +27,6 @@ export function recoverOrphan(pid: number, identity: string) {
+   try {
+     process.kill(-pid, 'SIGKILL');
+   } catch {
+-    // The child may already have exited with its parent.
++    // The process group may already be gone.
+   }
+ }
+diff --git a/src/collaboration-engine.ts b/src/collaboration-engine.ts
+index f8ddb3c..e3d76ba 100644
+--- a/src/collaboration-engine.ts
++++ b/src/collaboration-engine.ts
+@@ -3,7 +3,7 @@ import { recoverOrphan } from './adapters/process.js';
+ import { randomBytes } from 'node:crypto';
+ import { readFileSync } from 'node:fs';
+ import { join } from 'node:path';
+-import { Service } from './service.js';
++import { Service, TestRuns } from './service.js';
+ import { id, now, hash } from './database/sqlite.js';
+ import { peer, type Agent } from './messaging/protocol.js';
+ import { runTests } from './tasks/test-runner.js';
+@@ -33,6 +33,13 @@ export class Engine {
+         if (r.pid && r.process_identity) recoverOrphan(r.pid, r.process_identity);
+         this.service.db.put('runs', { ...r, status: 'interrupted', ended_at: now() });
+       }
++    // Detached test children survive a killed Bridge; recoverOrphan only signals a process
++    // group whose birth identity still matches, so a recycled PID is left alone.
++    for (const t of this.service.db.all('test_runs'))
++      if (t.status === 'running') {
++        if (t.pid && t.process_identity) recoverOrphan(t.pid, t.process_identity);
++        this.service.db.put('test_runs', { ...t, status: 'interrupted', ended_at: now() });
++      }
+     for (const a of this.service.db.all('artifacts'))
+       this.service.artifacts.export(a.collaboration_id, a.name, a.content);
+     for (const c of this.service.db.all('collaborations'))
+@@ -299,7 +306,7 @@ export class Engine {
+           const test =
+             v.integrated_sha === integration.sha && v.code_test?.passed
+               ? { ...v.code_test, reused: true }
+-              : await runTests(integration.path, v.test_command, signal);
++              : await runTests(integration.path, v.test_command, signal, new TestRuns(s.db, c));
+           try {
+             assertIntegratedSnapshot(v.work, integration.sha!);
+           } catch (e) {
+diff --git a/src/database/sqlite.ts b/src/database/sqlite.ts
+index 2dc1f66..6082b94 100644
+--- a/src/database/sqlite.ts
++++ b/src/database/sqlite.ts
+@@ -26,6 +26,7 @@ export class Store {
+       'disagreements',
+       'decisions',
+       'runs',
++      'test_runs',
+       'evidence',
+       'comments',
+     ])
+diff --git a/src/service.ts b/src/service.ts
+index a814a91..52d00ee 100644
+--- a/src/service.ts
++++ b/src/service.ts
+@@ -9,8 +9,50 @@ import { qualityGate } from './consensus/quality-gate.js';
+ import { schemas } from './tools.js';
+ import { z } from 'zod';
+ import { Worktrees, git, assertIntegratedSnapshot } from './tasks/worktrees.js';
+-import { runTests } from './tasks/test-runner.js';
++import { runTests, type TestProcessRegistry, type TestRunOutcome } from './tasks/test-runner.js';
+ import { workspacePath } from './policy/permissions.js';
++// Test children are detached, so their identity is kept in its own record kind: mixing them
++// into agent runs would corrupt the retry and fallback decisions that read the last run.
++export class TestRuns implements TestProcessRegistry {
++  constructor(
++    private db: Store,
++    private collaboration_id: string,
++  ) {}
++  started(info: { pid: number; identity: string | null; command: string[]; cwd: string }) {
++    const v = {
++      id: id('testrun'),
++      collaboration_id: this.collaboration_id,
++      pid: info.pid,
++      process_identity: info.identity,
++      command: info.command,
++      cwd: info.cwd,
++      status: 'running',
++      started_at: now(),
++      ended_at: null,
++      exit_code: null,
++      signal: null,
++      error: null,
++    };
++    this.db.put('test_runs', v);
++    return v.id;
++  }
++  finished(
++    handle: string,
++    status: TestRunOutcome,
++    detail: { exit_code: number | null; signal: string | null; error?: string },
++  ) {
++    const v = this.db.get('test_runs', handle);
++    if (!v) return;
++    this.db.put('test_runs', {
++      ...v,
++      status,
++      exit_code: detail.exit_code,
++      signal: detail.signal,
++      error: detail.error ?? null,
++      ended_at: now(),
++    });
++  }
++}
+ export class Service {
+   runSignals = new Map<string, AbortSignal>();
+   artifacts: Artifacts;
+@@ -436,6 +478,7 @@ export class Service {
+           ['review', 'integrity'].includes(collab.phase) ? w.paths.integration : w.paths[actor],
+           collab.test_command,
+           ctx.run_id ? this.runSignals.get(ctx.run_id) : undefined,
++          new TestRuns(this.db, c),
+         );
+         this.db.event(c, 'code.test', { agent: actor, ...r });
+         return r;
+diff --git a/src/tasks/test-runner.ts b/src/tasks/test-runner.ts
+index 322cb46..4dc97a6 100644
+--- a/src/tasks/test-runner.ts
++++ b/src/tasks/test-runner.ts
+@@ -2,12 +2,45 @@ import { spawn } from 'node:child_process';
+ import { mkdirSync, realpathSync } from 'node:fs';
+ import { dirname, join } from 'node:path';
+ import { safeEnvironment } from '../policy/permissions.js';
+-import { killGroup } from '../adapters/process.js';
++import { killGroup, processIdentity } from '../adapters/process.js';
++export type TestRunOutcome = 'completed' | 'failed' | 'interrupted';
++export type TestResult = {
++  command: string[];
++  exit_code: number | null;
++  signal: string | null;
++  passed: boolean;
++  stdout: string;
++  stderr: string;
++  error?: string;
++};
++// A detached test process outlives a SIGKILLed Bridge, so its identity has to reach durable
++// storage before this function awaits anything. The registry is that boundary.
++export interface TestProcessRegistry {
++  started(info: { pid: number; identity: string | null; command: string[]; cwd: string }): string;
++  finished(
++    handle: string,
++    status: TestRunOutcome,
++    detail: { exit_code: number | null; signal: string | null; error?: string },
++  ): void;
++}
++// SIGKILL cannot be caught, but never hang a caller on a close event that does not arrive.
++function reaped(completion: Promise<unknown>) {
++  return new Promise<void>((resolve) => {
++    const timer = setTimeout(resolve, 5000);
++    timer.unref();
++    const done = () => {
++      clearTimeout(timer);
++      resolve();
++    };
++    completion.then(done, done);
++  });
++}
+ export async function runTests(
+   cwd: string,
+   command: string[] = ['node', '--test'],
+   signal?: AbortSignal,
+-) {
++  registry?: TestProcessRegistry,
++): Promise<TestResult> {
+   if (!command.length) throw Error('Empty test command');
+   const executable = command[0] === 'node' ? process.execPath : command[0]!;
+   const env = { ...safeEnvironment(), HOME: cwd, TMPDIR: join(cwd, '.bridge-tmp') };
+@@ -44,47 +77,79 @@ export async function runTests(
+     error = 'Test timeout';
+     killGroup(child, 'SIGKILL');
+   }, 120000);
++  // Close and error listeners are attached before registration: a registry that throws must
++  // still be able to observe the child being reaped instead of leaking it.
++  const completion = new Promise<TestResult>((resolve, reject) => {
++    child.stdout.setEncoding('utf8');
++    child.stderr.setEncoding('utf8');
++    child.stdout.on('data', (chunk) => {
++      stdout += chunk;
++      if (stdout.length > 2_000_000) {
++        error = 'Test output limit';
++        killGroup(child, 'SIGKILL');
++        stdout = stdout.slice(0, 2_000_000);
++      }
++    });
++    child.stderr.on('data', (chunk) => {
++      stderr += chunk;
++      if (stderr.length > 2_000_000) {
++        error = 'Test output limit';
++        killGroup(child, 'SIGKILL');
++        stderr = stderr.slice(0, 2_000_000);
++      }
++    });
++    child.on('error', reject);
++    child.on('close', (code, exitSignal) =>
++      resolve({
++        command,
++        exit_code: code,
++        signal: exitSignal,
++        passed: code === 0 && !error,
++        stdout,
++        stderr,
++        error,
++      }),
++    );
++  });
++  completion.catch(() => {});
++  let handle: string | undefined;
+   try {
+-    return await new Promise<{
+-      command: string[];
+-      exit_code: number | null;
+-      signal: string | null;
+-      passed: boolean;
+-      stdout: string;
+-      stderr: string;
+-      error?: string;
+-    }>((resolve, reject) => {
+-      child.stdout.setEncoding('utf8');
+-      child.stderr.setEncoding('utf8');
+-      child.stdout.on('data', (chunk) => {
+-        stdout += chunk;
+-        if (stdout.length > 2_000_000) {
+-          error = 'Test output limit';
+-          killGroup(child, 'SIGKILL');
+-          stdout = stdout.slice(0, 2_000_000);
+-        }
++    if (registry && child.pid)
++      handle = registry.started({
++        pid: child.pid,
++        identity: processIdentity(child.pid),
++        command,
++        cwd,
+       });
+-      child.stderr.on('data', (chunk) => {
+-        stderr += chunk;
+-        if (stderr.length > 2_000_000) {
+-          error = 'Test output limit';
+-          killGroup(child, 'SIGKILL');
+-          stderr = stderr.slice(0, 2_000_000);
+-        }
++  } catch (e) {
++    error = 'Test registration failed';
++    killGroup(child, 'SIGKILL');
++    clearTimeout(timer);
++    signal?.removeEventListener('abort', abort);
++    await reaped(completion);
++    throw e;
++  }
++  const report = (status: TestRunOutcome, detail: TestResult | { error: string }) => {
++    if (!registry || !handle) return;
++    try {
++      registry.finished(handle, status, {
++        exit_code: 'exit_code' in detail ? detail.exit_code : null,
++        signal: 'signal' in detail ? detail.signal : null,
++        error: detail.error,
+       });
+-      child.on('error', reject);
+-      child.on('close', (code, exitSignal) =>
+-        resolve({
+-          command,
+-          exit_code: code,
+-          signal: exitSignal,
+-          passed: code === 0 && !error,
+-          stdout,
+-          stderr,
+-          error,
+-        }),
+-      );
+-    });
++      // A persistence failure must not change what the caller observes about the test itself.
++    } catch {}
++  };
++  try {
++    const result = await completion;
++    report(
++      result.error === 'Test cancelled' ? 'interrupted' : result.passed ? 'completed' : 'failed',
++      result,
++    );
++    return result;
++  } catch (e) {
++    report('failed', { error: String(e) });
++    throw e;
+   } finally {
+     clearTimeout(timer);
+     signal?.removeEventListener('abort', abort);
+diff --git a/tests/orphan-recovery.test.ts b/tests/orphan-recovery.test.ts
+new file mode 100644
+index 0000000..50378e1
+--- /dev/null
++++ b/tests/orphan-recovery.test.ts
+@@ -0,0 +1,553 @@
++import { test, type TestContext } from 'node:test';
++import assert from 'node:assert/strict';
++import cp from 'node:child_process';
++import { syncBuiltinESMExports } from 'node:module';
++import { EventEmitter, once } from 'node:events';
++import { PassThrough } from 'node:stream';
++import { copyFileSync, mkdtempSync, rmSync, mkdirSync } from 'node:fs';
++import { tmpdir } from 'node:os';
++import { join } from 'node:path';
++import { loadConfig, projectRoot } from '../src/config.js';
++import { Store } from '../src/database/sqlite.js';
++import { Service, TestRuns } from '../src/service.js';
++import { Engine } from '../src/collaboration-engine.js';
++import { runTests, type TestProcessRegistry } from '../src/tasks/test-runner.js';
++import { processIdentity } from '../src/adapters/process.js';
++import type { Adapter } from '../src/adapters/types.js';
++
++const realSpawn = cp.spawn;
++const realSpawnSync = cp.spawnSync;
++let nextPid = 42000;
++
++class TestChild extends EventEmitter {
++  pid = nextPid++;
++  exitCode: number | null = null;
++  signalCode: string | null = null;
++  stdout = new PassThrough();
++  stderr = new PassThrough();
++  stdin = new PassThrough();
++  birth = 'Mon Sep 28 16:00:00 2026';
++  uid = '501';
++  comm = '/bin/sleep';
++  live = true;
++  close(code: number | null, signal: string | null = null) {
++    if (!this.live) return;
++    this.live = false;
++    this.exitCode = code;
++    this.signalCode = signal;
++    this.stdout.end();
++    this.stderr.end();
++    this.emit('exit', code, signal);
++    this.emit('close', code, signal);
++  }
++  kill(signal: string) {
++    queueMicrotask(() => this.close(null, signal));
++    return true;
++  }
++}
++
++function processBoundary(t: TestContext) {
++  const children = new Map<number, TestChild>();
++  const signals: { pid: number; signal: string | number | undefined }[] = [];
++  const gitCalls: string[][] = [];
++  const ps = t.mock.method(cp, 'spawnSync', (file, args, options) => {
++    if (file === 'git') {
++      const command = args!.slice(2);
++      gitCalls.push(command);
++      assert.ok(
++        [
++          'rev-parse HEAD',
++          'diff HEAD --name-only',
++          'ls-files --others --exclude-standard',
++        ].includes(command.join(' ')),
++        'unexpected Git command: ' + command.join(' '),
++      );
++      return { status: 0, stdout: command[0] === 'rev-parse' ? 'a'.repeat(40) : '', stderr: '' };
++    }
++    if (file !== 'ps') return realSpawnSync(file, args, options);
++    const child = children.get(Number(args?.[args.indexOf('-p') + 1]));
++    const fields = (args || []).filter((_, index) => args?.[index - 1] === '-o');
++    const stdout = child?.live
++      ? fields
++          .map(
++            (field) => ({ 'lstart=': child.birth, 'uid=': child.uid, 'comm=': child.comm })[field],
++          )
++          .join(' ') + '\n'
++      : '';
++    return { status: child?.live ? 0 : 1, stdout, stderr: '', signal: null, pid: 1, output: [] };
++  });
++  const kill = t.mock.method(process, 'kill', (pid, signal) => {
++    const child = children.get(Math.abs(pid));
++    if (!child?.live) throw Object.assign(Error('No such process'), { code: 'ESRCH' });
++    if (signal !== 0) {
++      signals.push({ pid, signal });
++      child.kill(String(signal));
++    }
++    return true;
++  });
++  syncBuiltinESMExports();
++  t.after(() => {
++    for (const child of children.values()) child.close(0);
++    ps.mock.restore();
++    kill.mock.restore();
++    syncBuiltinESMExports();
++  });
++  return {
++    signals,
++    gitCalls,
++    create() {
++      const child = new TestChild();
++      children.set(child.pid, child);
++      const closed = new Promise<void>((resolve) => child.once('close', () => resolve()));
++      return { child, closed };
++    },
++  };
++}
++const inert: Adapter = {
++  async turn() {
++    throw Error('Recovery must not launch an agent');
++  },
++};
++
++function fixture(t: TestContext) {
++  const root = mkdtempSync(join(tmpdir(), 'bridge-orphan-'));
++  copyFileSync(
++    join(projectRoot, 'agent-bridge.config.yaml'),
++    join(root, 'agent-bridge.config.yaml'),
++  );
++  const previous = process.env.AGENT_BRIDGE_STATE;
++  process.env.AGENT_BRIDGE_STATE = join(root, 'state');
++  let config;
++  try {
++    config = loadConfig(root);
++  } finally {
++    if (previous === undefined) delete process.env.AGENT_BRIDGE_STATE;
++    else process.env.AGENT_BRIDGE_STATE = previous;
++  }
++  const f = { root, config, db: new Store(config.db), os: processBoundary(t) };
++  t.after(() => {
++    f.db.close();
++    rmSync(root, { recursive: true, force: true });
++  });
++  return f;
++}
++
++function alive(pid: number) {
++  try {
++    process.kill(pid, 0);
++    return true;
++  } catch (e) {
++    if ((e as NodeJS.ErrnoException).code === 'ESRCH') return false;
++    throw e;
++  }
++}
++
++function engine(db: Store, config: ReturnType<typeof loadConfig>) {
++  return new Engine(new Service(db, config), { codex: inert, claude: inert });
++}
++
++// The outer Bridge sandbox may deny ps/sysctl and signals. Model only that OS boundary;
++// runTests, Store, Service and Engine execute unchanged, including sandbox profile creation.
++function controlledSpawn(
++  t: TestContext,
++  os: ReturnType<typeof processBoundary>,
++  outcome: number | 'output' = 0,
++) {
++  let tracked: ReturnType<typeof os.create> | undefined;
++  const stub = t.mock.method(cp, 'spawn', (file, args, options) => {
++    assert.equal(file, '/usr/bin/sandbox-exec');
++    assert.equal(args?.[0], '-p');
++    assert.match(String(args?.[1]), /\(deny default\)/);
++    assert.match(String(args?.[1]), /credentials/);
++    assert.equal(options?.detached, true);
++    tracked = os.create();
++    return tracked.child;
++  });
++  syncBuiltinESMExports();
++  t.after(() => {
++    stub.mock.restore();
++    syncBuiltinESMExports();
++  });
++  return {
++    get child() {
++      assert.ok(tracked, 'runner must spawn a child');
++      return tracked.child;
++    },
++    release() {
++      if (outcome === 'output') this.child.stdout.write('x'.repeat(2100000));
++      else this.child.close(outcome);
++    },
++    get calls() {
++      return stub.mock.callCount();
++    },
++  };
++}
++
++test('environment probe records real ps availability', async (t) => {
++  const child = realSpawn(process.execPath, ['-e', 'setTimeout(() => {}, 250)'], {
++    stdio: 'ignore',
++    env: { PATH: '/usr/bin:/bin' },
++  });
++  const closed = once(child, 'close');
++  const ps = realSpawnSync('ps', ['-p', String(child.pid), '-o', 'lstart=', '-o', 'uid='], {
++    encoding: 'utf8',
++    timeout: 1000,
++  });
++  t.diagnostic(
++    JSON.stringify({
++      ps_status: ps.status,
++      ps_error: ps.stderr?.trim(),
++      spawn_error: ps.error?.message,
++    }),
++  );
++  const [code] = await closed;
++  assert.equal(code, 0);
++});
++
++test('Store restart preserves identity for Engine.recover', async (t) => {
++  const f = fixture(t);
++  const { child, closed } = f.os.create();
++  const identity = processIdentity(child.pid!);
++  assert.ok(identity, 'the runner must capture the OS-reported birth identity');
++  const handle = new TestRuns(f.db, 'recovery').started({
++    pid: child.pid!,
++    identity,
++    command: ['/bin/sleep', '30'],
++    cwd: f.root,
++  });
++  f.db.close();
++  f.db = new Store(f.config.db);
++  const stored = f.db.get('test_runs', handle);
++  assert.equal(stored.status, 'running');
++  assert.equal(stored.process_identity, processIdentity(stored.pid));
++  assert.equal(stored.pid, child.pid);
++  const e = engine(f.db, f.config);
++  e.recover();
++  await closed;
++  assert.equal(alive(child.pid!), false);
++  assert.equal(child.signalCode, 'SIGKILL');
++  assert.deepEqual(f.os.signals, [{ pid: -child.pid, signal: 'SIGKILL' }]);
++  const recovered = f.db.get('test_runs', handle);
++  assert.equal(recovered.status, 'interrupted');
++  assert.ok(recovered.ended_at);
++  e.recover();
++  assert.deepEqual(f.db.get('test_runs', handle), recovered);
++  assert.deepEqual(f.db.all('runs'), []);
++});
++
++for (const kind of ['mismatch', 'missing', 'completed'] as const) {
++  test('recovery preserves live child with ' + kind + ' record', async (t) => {
++    const f = fixture(t);
++    const { child } = f.os.create();
++    const identity = processIdentity(child.pid!);
++    assert.ok(identity);
++    const registry = new TestRuns(f.db, 'recovery');
++    const handle = registry.started({
++      pid: child.pid!,
++      identity:
++        kind === 'missing' ? null : kind === 'mismatch' ? identity + '-different' : identity,
++      command: ['/bin/sleep', '30'],
++      cwd: f.root,
++    });
++    if (kind === 'completed')
++      registry.finished(handle, 'completed', { exit_code: 0, signal: null });
++    const before = f.db.get('test_runs', handle);
++    engine(f.db, f.config).recover();
++    assert.equal(alive(child.pid!), true, 'unrelated or terminal records must not trigger a kill');
++    assert.deepEqual(f.os.signals, []);
++    const after = f.db.get('test_runs', handle);
++    if (kind === 'completed') assert.deepEqual(after, before);
++    else {
++      assert.equal(after.status, 'interrupted');
++      assert.ok(after.ended_at);
++    }
++  });
++}
++
++test('identity survives exec but rejects PID reuse', async (t) => {
++  const f = fixture(t);
++  const { child, closed } = f.os.create();
++  child.comm = '/usr/bin/sandbox-exec';
++  const before = processIdentity(child.pid);
++  assert.ok(before);
++  const handle = new TestRuns(f.db, 'exec').started({
++    pid: child.pid,
++    identity: before,
++    command: ['node'],
++    cwd: f.root,
++  });
++  child.comm = '/usr/local/bin/node';
++  assert.equal(processIdentity(child.pid), before);
++  engine(f.db, f.config).recover();
++  await closed;
++  assert.equal(f.db.get('test_runs', handle).status, 'interrupted');
++  assert.deepEqual(f.os.signals, [{ pid: -child.pid, signal: 'SIGKILL' }]);
++
++  const recycled = f.os.create().child;
++  const stale = new TestRuns(f.db, 'exec').started({
++    pid: recycled.pid,
++    identity: processIdentity(recycled.pid),
++    command: ['node'],
++    cwd: f.root,
++  });
++  recycled.birth = 'Mon Sep 28 16:00:01 2026';
++  engine(f.db, f.config).recover();
++  assert.equal(recycled.live, true);
++  assert.equal(f.db.get('test_runs', stale).status, 'interrupted');
++  assert.equal(f.os.signals.length, 1, 'a changed birth must not generate another signal');
++});
++
++for (const exitCode of [0, 7]) {
++  test('runner persists live identity and terminal result for exit ' + exitCode, async (t) => {
++    const f = fixture(t);
++    const launch = controlledSpawn(t, f.os, exitCode);
++    const command = ['node', '--test'];
++    const pending = runTests(f.root, command, undefined, new TestRuns(f.db, 'runner'));
++    const [record] = f.db.all('test_runs', 'runner');
++    assert.ok(record, 'running record must exist before the first await');
++    assert.equal(record.pid, launch.child.pid);
++    assert.equal(record.process_identity, processIdentity(launch.child.pid!));
++    assert.ok(record.process_identity);
++    assert.deepEqual(record.command, command);
++    assert.equal(record.cwd, f.root);
++    assert.equal(record.status, 'running');
++    launch.release();
++    const result = await pending;
++    assert.equal(result.passed, exitCode === 0);
++    const done = f.db.get('test_runs', record.id);
++    assert.equal(done.status, exitCode === 0 ? 'completed' : 'failed');
++    assert.equal(done.exit_code, exitCode);
++    assert.ok(done.ended_at);
++    assert.equal(alive(record.pid), false);
++    assert.deepEqual(f.db.all('runs'), []);
++  });
++}
++
++test('abort kills the child and persists interrupted', async (t) => {
++  const f = fixture(t);
++  const launch = controlledSpawn(t, f.os);
++  const abort = new AbortController();
++  const pending = runTests(f.root, ['node'], abort.signal, new TestRuns(f.db, 'abort'));
++  abort.abort();
++  const result = await pending;
++  assert.equal(result.error, 'Test cancelled');
++  assert.equal(result.passed, false);
++  assert.equal(alive(launch.child.pid!), false);
++  assert.equal(f.db.all('test_runs')[0].status, 'interrupted');
++});
++
++test('timeout retains the 120s policy and persists failed after killing the child', async (t) => {
++  const f = fixture(t);
++  const launch = controlledSpawn(t, f.os);
++  const originalTimer = globalThis.setTimeout;
++  let deadline: (() => void) | undefined;
++  t.mock.method(globalThis, 'setTimeout', (callback, ms, ...args) => {
++    if (ms === 120000) deadline = () => (callback as () => void)();
++    return originalTimer(callback, ms, ...args);
++  });
++  const pending = runTests(f.root, ['node'], undefined, new TestRuns(f.db, 'timeout'));
++  assert.ok(deadline, 'runner must install the existing 120 second deadline');
++  deadline();
++  const result = await pending;
++  assert.equal(result.error, 'Test timeout');
++  assert.equal(result.passed, false);
++  assert.equal(alive(launch.child.pid!), false);
++  assert.equal(f.db.all('test_runs')[0].status, 'failed');
++});
++
++test('output limit kills the child and preserves the cap and failed state', async (t) => {
++  const f = fixture(t);
++  const launch = controlledSpawn(t, f.os, 'output');
++  const pending = runTests(f.root, ['node'], undefined, new TestRuns(f.db, 'output'));
++  launch.release();
++  const result = await pending;
++  assert.equal(result.error, 'Test output limit');
++  assert.equal(result.stdout.length, 2000000);
++  assert.equal(result.passed, false);
++  assert.equal(alive(launch.child.pid!), false);
++  assert.equal(f.db.all('test_runs')[0].status, 'failed');
++});
++
++test('started callback failure reaps the child before rejecting', async (t) => {
++  const f = fixture(t);
++  const launch = controlledSpawn(t, f.os);
++  let finished = 0;
++  const registry: TestProcessRegistry = {
++    started(info) {
++      assert.ok(info.identity);
++      throw Error('registry unavailable');
++    },
++    finished() {
++      finished++;
++    },
++  };
++  await assert.rejects(runTests(f.root, ['node'], undefined, registry), /registry unavailable/);
++  assert.equal(alive(launch.child.pid!), false);
++  assert.equal(finished, 0, 'a failed started callback did not produce a handle');
++});
++
++test('finished callback failure preserves the result and leaves no live child', async (t) => {
++  const f = fixture(t);
++  const launch = controlledSpawn(t, f.os);
++  let finished = 0;
++  const registry: TestProcessRegistry = {
++    started: () => 'handle',
++    finished() {
++      finished++;
++      throw Error('registry unavailable');
++    },
++  };
++  const pending = runTests(f.root, ['node'], undefined, registry);
++  launch.release();
++  const result = await pending;
++  assert.equal(result.passed, true);
++  assert.equal(finished, 1);
++  assert.equal(alive(launch.child.pid!), false);
++});
++
++test('workspace_test persists a test run without changing its agent run', async (t) => {
++  const f = fixture(t);
++  const s = new Service(f.db, f.config);
++  const c = s.create({
++    goal: 'fixture',
++    initiator: 'codex',
++    mode: 'collaborative_report',
++    required_sections: [],
++    require_evidence: false,
++    test_command: ['node', '--test'],
++  }).id;
++  f.db.put('collaborations', {
++    ...s.collab(c),
++    phase: 'draft',
++    work: { paths: { codex: f.root } },
++  });
++  const agent = { id: 'agent-run', collaboration_id: c, agent: 'codex', status: 'running' };
++  f.db.put('runs', agent);
++  const launch = controlledSpawn(t, f.os);
++  const pending = s.call(
++    'workspace_test',
++    {},
++    { actor: 'codex', collaboration_id: c, run_id: agent.id },
++  );
++  const [running] = f.db.all('test_runs', c);
++  assert.equal(running.status, 'running');
++  assert.equal(running.process_identity, processIdentity(launch.child.pid!));
++  launch.release();
++  assert.equal((await pending).passed, true);
++  assert.equal(f.db.get('test_runs', running.id).status, 'completed');
++  assert.deepEqual(f.db.get('runs', agent.id), agent);
++});
++
++test('synthesis persists its test child and cached validation starts no second child', async (t) => {
++  const f = fixture(t);
++  const s = new Service(f.db, f.config);
++  const c = s.create({
++    goal: 'integration fixture',
++    initiator: 'codex',
++    mode: 'collaborative_report',
++    required_sections: [],
++    require_evidence: false,
++    test_command: ['node', '--test'],
++  }).id;
++  const repo = join(f.root, 'repo');
++  mkdirSync(repo);
++  // Git is another sandbox-restricted OS boundary; snapshot assertions still execute.
++  const sha = 'a'.repeat(40);
++  f.db.put('collaborations', {
++    ...s.collab(c),
++    mode: 'collaborative_coding',
++    phase: 'synthesis',
++    work: { paths: { integration: repo } },
++  });
++  const e = new Engine(s, { codex: inert, claude: inert });
++  t.mock.method(s.worktrees, 'integrate', () => ({ ok: true, sha, path: repo }));
++  let stop = new AbortController();
++  t.mock.method(e, 'turn', async () => {
++    if (s.collab(c).phase === 'review') stop.abort();
++    return { summary: 'test fixture', ready_for_next_phase: true };
++  });
++  const launch = controlledSpawn(t, f.os);
++  const pending = e.run(c, stop.signal);
++  // The synthesis turn is awaited before the runner starts.
++  await new Promise((resolve) => setImmediate(resolve));
++  const [running] = f.db.all('test_runs', c);
++  assert.ok(running, 'integration path must register the child');
++  assert.equal(running.status, 'running');
++  assert.equal(running.process_identity, processIdentity(launch.child.pid!));
++  launch.release();
++  await pending;
++  assert.equal(f.db.get('test_runs', running.id).status, 'completed');
++  assert.equal(s.collab(c).code_test.passed, true);
++  assert.equal(s.collab(c).code_integrated, true);
++  f.db.put('collaborations', { ...s.collab(c), phase: 'synthesis', phase_step: 0 });
++  stop = new AbortController();
++  await e.run(c, stop.signal);
++  assert.equal(s.collab(c).code_test.reused, true);
++  assert.equal(launch.calls, 1);
++  assert.deepEqual(f.os.gitCalls, [
++    ['rev-parse', 'HEAD'],
++    ['diff', 'HEAD', '--name-only'],
++    ['ls-files', '--others', '--exclude-standard'],
++    ['rev-parse', 'HEAD'],
++    ['diff', 'HEAD', '--name-only'],
++    ['ls-files', '--others', '--exclude-standard'],
++  ]);
++  assert.equal(f.db.all('test_runs', c).length, 1);
++  assert.deepEqual(f.db.all('runs'), []);
++});
++
++test('spawn failure without a PID rejects without a phantom running record', async (t) => {
++  const f = fixture(t);
++  const launch = controlledSpawn(t, f.os);
++  const original = cp.spawn;
++  const stub = t.mock.method(cp, 'spawn', (...args) => {
++    const child = original(...args);
++    Object.defineProperty(child, 'pid', { value: undefined });
++    queueMicrotask(() => {
++      child.emit('error', Error('spawn ENOENT'));
++      child.close(null);
++    });
++    return child;
++  });
++  syncBuiltinESMExports();
++  t.after(() => {
++    stub.mock.restore();
++    syncBuiltinESMExports();
++  });
++  await assert.rejects(
++    runTests(f.root, ['node'], undefined, new TestRuns(f.db, 'spawn')),
++    /ENOENT/,
++  );
++  assert.equal(launch.calls, 1);
++  assert.deepEqual(f.db.all('test_runs'), []);
++});
++
++test('pre-aborted runner never launches or registers a child', async (t) => {
++  const f = fixture(t);
++  const launch = controlledSpawn(t, f.os);
++  const abort = new AbortController();
++  abort.abort();
++  await assert.rejects(
++    runTests(f.root, ['node'], abort.signal, new TestRuns(f.db, 'abort')),
++    /cancelled/,
++  );
++  assert.equal(launch.calls, 0);
++  assert.deepEqual(f.db.all('test_runs'), []);
++});
++
++test('empty successful ps output is persisted as unknown identity', async (t) => {
++  const f = fixture(t);
++  const launch = controlledSpawn(t, f.os);
++  const ps = t.mock.method(cp, 'spawnSync', () => ({ status: 0, stdout: '  \n', stderr: '' }));
++  syncBuiltinESMExports();
++  t.after(() => {
++    ps.mock.restore();
++    syncBuiltinESMExports();
++  });
++  const pending = runTests(f.root, ['node'], undefined, new TestRuns(f.db, 'empty-identity'));
++  const [record] = f.db.all('test_runs');
++  assert.equal(record.process_identity, null);
++  assert.equal(record.status, 'running');
++  launch.release();
++  assert.equal((await pending).passed, true);
++});

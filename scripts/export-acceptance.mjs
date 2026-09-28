@@ -12,16 +12,20 @@ const config = loadConfig(),
   service = new Service(db, config);
 const runs = JSON.parse(readFileSync(process.argv[2] || 'logs/acceptance-runs.json', 'utf8'));
 const digest = (v) => createHash('sha256').update(v).digest('hex');
-const clean = (v) =>
-  JSON.parse(
-    JSON.stringify(v)
-      .replaceAll(config.root, '<PROJECT>')
-      .replaceAll(config.state, '<LOCAL_STATE>')
-      .replace(/\/Users\/[^/\s"\\]+/g, '<HOME>'),
-  );
+const privateSessions = new Set();
+const clean = (v) => {
+  let text = JSON.stringify(v)
+    .replaceAll(config.root, '<PROJECT>')
+    .replaceAll(config.state, '<LOCAL_STATE>')
+    .replace(/\/Users\/[^/\s"\\]+/g, '<HOME>');
+  for (const sid of privateSessions)
+    text = text.replaceAll(sid, `<SESSION:${digest(sid).slice(0, 12)}>`);
+  return JSON.parse(text);
+};
 mkdirSync('docs/acceptance', { recursive: true });
 const summary = [];
 for (const [label, id] of runs) {
+  if (!/^[a-z0-9][a-z0-9-]{0,63}$/.test(label)) throw Error('Invalid export label');
   const c = db.get('collaborations', id);
   if (c.status !== 'completed')
     throw Error(`${label} is ${c.status}; do not publish incomplete acceptance as success`);
@@ -30,6 +34,12 @@ for (const [label, id] of runs) {
     messages = db.all('messages', id),
     versions = db.all('artifact_versions', id).filter((v) => v.name === 'draft.md'),
     reviews = db.all('reviews', id);
+  for (const session of sessions) privateSessions.add(session.session_id);
+  for (const event of db.events(id)) {
+    for (const key of ['session_id', 'thread_id', 'threadId'])
+      if (typeof event.data?.[key] === 'string') privateSessions.add(event.data[key]);
+    if (typeof event.data?.thread?.id === 'string') privateSessions.add(event.data.thread.id);
+  }
   const gate = qualityGate(db, service.artifacts, service.bus, id);
   if (
     !gate.ready ||
@@ -51,6 +61,7 @@ for (const [label, id] of runs) {
         'disagreement.created',
         'disagreement.updated',
         'code.integration_test',
+        'maintainer.guidance',
       ].includes(e.type),
     )
     .map((e) => {

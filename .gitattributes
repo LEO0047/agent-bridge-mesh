@@ -1,0 +1,2 @@
+# Unified diff evidence contains a single-space marker for empty context lines.
+docs/acceptance/*.diff whitespace=-blank-at-eol
