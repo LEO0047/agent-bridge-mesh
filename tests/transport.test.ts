@@ -77,3 +77,35 @@ test(
     assert.equal(result.error, 'Test cancelled');
   },
 );
+
+test(
+  'sandbox allows child-group signals while denying signals outside its sandbox',
+  { skip: process.platform !== 'darwin' },
+  async () => {
+    const root = mkdtempSync(join(tmpdir(), 'bridge-signal-scope-'));
+    const outside = spawn(process.execPath, ['-e', 'setInterval(()=>{},1000)'], {
+      detached: true,
+      stdio: 'ignore',
+    });
+    assert.ok(outside.pid);
+    const exited = new Promise((resolve) => outside.once('exit', resolve));
+    try {
+      const source = `
+        const {spawn}=require('node:child_process');
+        const assert=require('node:assert/strict');
+        for(const pid of [${outside.pid},-${outside.pid}])
+          assert.throws(()=>process.kill(pid,0),e=>e.code==='EPERM');
+        const child=spawn(process.execPath,['-e','setTimeout(()=>{},1000)'],{detached:true,stdio:'ignore'});
+        child.once('exit',(code,signal)=>{assert.equal(signal,'SIGKILL');console.log('signal scope verified');});
+        setTimeout(()=>process.kill(-child.pid,'SIGKILL'),50);
+      `;
+      const result = await runTests(root, ['node', '-e', source]);
+      assert.equal(result.passed, true, JSON.stringify(result));
+      assert.match(result.stdout, /signal scope verified/);
+      assert.doesNotThrow(() => process.kill(outside.pid!, 0));
+    } finally {
+      process.kill(-outside.pid!, 'SIGKILL');
+      await exited;
+    }
+  },
+);

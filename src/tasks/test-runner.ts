@@ -17,7 +17,7 @@ export async function runTests(
   // Test code is untrusted code. It cannot inherit credentials or reach the network.
   if (process.platform === 'darwin') {
     const quote = (p: string) => JSON.stringify(realpathSync(p));
-    const profile = `(version 1)(deny default)(allow process*)(allow sysctl-read)(allow mach-lookup)(allow file-read-metadata)(allow file-read* (literal "/") (subpath "/System") (subpath "/usr") (subpath "/bin") (subpath "/sbin") (subpath "/Library/Apple") (subpath "/Library/Frameworks") (subpath "/dev") (subpath ${quote(dirname(process.execPath))}) (subpath ${quote(cwd)}))(allow file-write* (subpath ${quote(cwd)}) (literal "/dev/null"))`;
+    const profile = `(version 1)(deny default)(allow process*)(allow signal (target same-sandbox))(allow sysctl-read)(allow mach-lookup)(allow file-read-metadata)(allow file-read* (literal "/") (subpath "/System") (subpath "/usr") (subpath "/bin") (subpath "/sbin") (subpath "/Library/Apple") (subpath "/Library/Frameworks") (subpath "/dev") (subpath ${quote(dirname(process.execPath))}) (subpath ${quote(cwd)}))(allow file-write* (subpath ${quote(cwd)}) (literal "/dev/null"))`;
     runner = '/usr/bin/sandbox-exec';
     const protectedFiles = String.raw`(deny file-read* (regex #"/([.]env([.].*)?|credentials([.].*)?|secrets?([.].*)?|[.]npmrc|[.]pypirc|id_rsa|id_ed25519)$"))`;
     args = ['-p', profile + protectedFiles, executable, ...args];
