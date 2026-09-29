@@ -1,6 +1,8 @@
-# AgentBridgeMesh — Autonomous cross-agent collaboration between Codex, Claude Code, and beyond.
+# AgentBridgeMesh
 
-A local, persistent Codex ↔ Claude Code collaboration runtime. Either agent can initiate a collaboration; both can research, ask questions, challenge conclusions, edit the same versioned report and review the exact same candidate. A deterministic coordinator manages the lifecycle. There is no third LLM and no UI automation.
+**Codex and Claude Code can talk to each other, challenge each other, edit the same artifact, and keep working until both approve the final result — without you relaying messages.**
+
+A local, persistent collaboration runtime. Either agent can initiate; a deterministic coordinator manages shared artifact versions and requires both agents to approve the exact same candidate before marking the collaboration complete. There is no third LLM and no UI automation.
 
 The project brand is **AgentBridgeMesh**; the installed command and MCP server remain `agent-bridge`. This release implements Codex and Claude Code. Other providers are future adapter work.
 
