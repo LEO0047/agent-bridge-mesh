@@ -2,11 +2,25 @@
 
 **Codex and Claude Code can talk to each other, challenge each other, edit the same artifact, and keep working until both approve the final result — without you relaying messages.**
 
-A local, persistent collaboration runtime. Either agent can initiate; a deterministic coordinator manages shared artifact versions and requires both agents to approve the exact same candidate before marking the collaboration complete. There is no third LLM and no UI automation.
+[**v1.0.0 Release**](https://github.com/LEO0047/agent-bridge-mesh/releases/tag/v1.0.0) · [Quick start](#install) · [Real acceptance evidence](docs/ACCEPTANCE.md) · [繁體中文](docs/USAGE.zh-TW.md)
 
-The project brand is **AgentBridgeMesh**; the installed command and MCP server remain `agent-bridge`. This release implements Codex and Claude Code. Other providers are future adapter work.
+![45-second real-run replay: Codex challenges a draft, Claude responds, both revise it, then approve the same version before final.md is exported.](docs/media/collaboration-demo.gif)
+
+*45-second editorial replay of a real Codex ↔ Claude run. Seeded faulty draft; real reviews and revisions. English summaries and condensed timing, not a screen recording.* [Transcript & source events](docs/media/README.md) · [Static poster](docs/media/demo-poster.png) · [Read the final report](docs/acceptance/review-regression-final.md)
+
+A local, persistent collaboration runtime. Either agent can initiate; a deterministic coordinator manages shared artifact versions and requires both agents to approve the exact same candidate before marking the collaboration complete. There is no third LLM and no UI automation. If limits are reached or a peer fails, the result is marked `degraded`, never falsely approved.
+
+## Built with its own collaboration loop
+
+**Codex and Claude Code used AgentBridgeMesh to improve AgentBridgeMesh itself.** Claude implemented persistent test-process tracking and restart cleanup. Codex challenged the process-identity assumption, contributed 18 regression tests, and revised the shared report with Claude.
+
+The run produced **22 peer messages, 7 draft versions, and two approvals of the same report and integrated commit**. [Inspect the source diff](docs/acceptance/self-hosting.diff), [the verdicts](docs/acceptance/self-hosting-summary.json), or [the final report](docs/acceptance/self-hosting-final.md).
+
+That peer-reviewed integration is one part of v1.0.0. Subsequent maintainer changes and real-process validation are [attributed separately](docs/ACCEPTANCE.md#joint-development-on-agentbridgemesh-itself); the final release passed 52 tests on three local Node versions.
 
 ## Install
+
+The brand is **AgentBridgeMesh**; the command and MCP server are `agent-bridge`. v1.0.0 is a [GitHub source release](https://github.com/LEO0047/agent-bridge-mesh/releases/tag/v1.0.0); npm and Homebrew distribution are not available yet. This release supports Codex and Claude Code; other providers are future adapter work.
 
 Requirements: Node.js 22.13+, Git, authenticated `codex` and `claude` CLIs. Report mode uses the providers' existing login; no API key is copied into Bridge. Sandboxed coding tests currently require macOS.
 
@@ -40,26 +54,9 @@ The initial desktop/CLI chat is the entry point. Bridge creates its own persiste
 
 ## Architecture
 
-```text
-Codex MCP / Claude MCP / CLI
-             |
-    authenticated Unix socket (0600)
-             |
-  deterministic daemon + scheduler
-      |                 |
- Codex App Server   Claude Code CLI
- thread/resume      --resume
- dynamic tools      scoped Bridge MCP
-      |                 |
-      +-- peer message bus --+
-             |
-     SQLite + artifact manager
-     disagreements + reviews
-             |
-  exact-version dual quality gate
-             |
-           final.md
-```
+![AgentBridgeMesh architecture: persistent Codex and Claude Code peers exchange messages and edit shared artifacts through a local coordinator; an exact-version dual quality gate exports final.md, with revision and degraded-result paths.](docs/media/architecture.svg)
+
+[Open the full-size diagram](docs/media/architecture.svg). Both clients enter through an authenticated local socket. The coordinator manages persistent peer sessions, messages, artifact versions and reviews in local SQLite. Revisions return to the shared draft; completion requires both approvals and all quality checks. Coding adds isolated peer worktrees and an integration commit to that review gate.
 
 Codex uses official App Server JSON-RPC: initialization, thread start/resume, turn start, streamed item events, dynamic tool calls, structured output and turn interruption. Dynamic tools are an explicitly experimental App Server capability; the adapter isolates this compatibility surface.
 

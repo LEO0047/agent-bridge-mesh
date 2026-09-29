@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="830" viewBox="0 0 1120 830" role="img" aria-labelledby="title desc">
+  <title id="title">AgentBridgeMesh architecture</title>
+  <desc id="desc">Either client starts a local collaboration. A deterministic coordinator manages persistent Codex and Claude Code sessions. Both exchange peer messages, edit versioned artifacts, and record evidence and disagreements in local SQLite. The quality gate requires both agents to approve the same version and hash before exporting final.md. Revisions return to the shared artifact; exhausted limits produce a degraded best-effort result.</desc>
+  <defs>
+    <pattern id="dots" width="24" height="24" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r="1" fill="#20313e"/></pattern>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 10 5 0 10" fill="none" stroke="#8ba7ba" stroke-width="1.6"/></marker>
+    <style>
+      text {font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; fill:#eff6fc}
+      .muted {fill:#a6b8c8} .teal {fill:#66e0ca} .amber {fill:#ffbc8c}
+      .label {font-size:13px; letter-spacing:1.6px; font-weight:600}
+      .body {font-size:17px} .small {font-size:14px}
+      .line {fill:none; stroke:#8ba7ba; stroke-width:1.8; marker-end:url(#arrow)}
+      .card {fill:#111d28; stroke:#2b3d4e; stroke-width:1.2}
+    </style>
+  </defs>
+  <rect width="1120" height="830" rx="20" fill="#0b1219"/>
+  <rect x="1" y="1" width="1118" height="828" rx="20" fill="url(#dots)" stroke="#2b3d4e"/>
+  <text x="42" y="49" class="label teal">AGENTBRIDGEMESH / ARCHITECTURE</text>
+  <text x="42" y="93" font-size="32" font-weight="600">Two peers. One shared outcome.</text>
+  <text x="42" y="123" class="body muted">Local state · persistent sessions · exact-version dual approval</text>
+  <rect x="744" y="44" width="332" height="78" rx="12" class="card"/>
+  <text x="910" y="73" text-anchor="middle" class="label muted">START FROM EITHER CLIENT</text>
+  <text x="910" y="101" text-anchor="middle" class="body">Codex MCP / Claude MCP / CLI</text>
+  <path d="M910 122 V155 H560 V181" class="line"/>
+  <text x="780" y="178" class="small muted">Authenticated local socket</text>
+  <rect x="360" y="184" width="400" height="91" rx="14" class="card"/>
+  <text x="560" y="220" text-anchor="middle" font-size="21" font-weight="600">Deterministic coordinator</text>
+  <text x="560" y="250" text-anchor="middle" class="body muted">Schedule · resume · retry · enforce limits</text>
+  <path d="M360 229 H185 V313" class="line"/>
+  <path d="M760 229 H935 V313" class="line"/>
+  <rect x="42" y="316" width="286" height="152" rx="14" fill="#112522" stroke="#407c70"/>
+  <text x="64" y="347" class="label teal">PERSISTENT PEER</text>
+  <text x="64" y="382" font-size="29" font-weight="600">Codex</text>
+  <text x="64" y="414" class="body muted">App Server · thread / resume</text>
+  <text x="64" y="443" class="small teal">Scoped dynamic tools</text>
+  <rect x="792" y="316" width="286" height="152" rx="14" fill="#2b211d" stroke="#89624b"/>
+  <text x="814" y="347" class="label amber">PERSISTENT PEER</text>
+  <text x="814" y="382" font-size="29" font-weight="600">Claude Code</text>
+  <text x="814" y="414" class="body muted">CLI · persistent session resume</text>
+  <text x="814" y="443" class="small amber">Scoped Bridge MCP</text>
+  <path d="M560 275 V316" class="line"/>
+  <rect x="376" y="316" width="368" height="226" rx="14" class="card"/>
+  <text x="560" y="347" text-anchor="middle" class="label teal">SHARED COLLABORATION STATE</text>
+  <text x="560" y="384" text-anchor="middle" font-size="22" font-weight="600">Messages ↔ artifacts ↔ reviews</text>
+  <path d="M328 394 H375" class="line" marker-start="url(#arrow)"/>
+  <path d="M745 394 H791" class="line" marker-start="url(#arrow)"/>
+  <text x="560" y="418" text-anchor="middle" class="body muted">Questions · evidence · disagreements</text>
+  <text x="560" y="447" text-anchor="middle" class="body muted">Shared draft + version history</text>
+  <line x1="400" y1="466" x2="720" y2="466" stroke="#2b3d4e"/>
+  <text x="560" y="496" text-anchor="middle" class="body">Local SQLite + artifact exports</text>
+  <text x="560" y="519" text-anchor="middle" class="small muted">State survives daemon restarts</text>
+  <path d="M560 542 V581" class="line"/>
+  <rect x="338" y="584" width="444" height="92" rx="14" class="card"/>
+  <text x="560" y="618" text-anchor="middle" font-size="23" font-weight="600">Dual approval + quality gate</text>
+  <text x="560" y="647" text-anchor="middle" class="body muted">Same version. Same hash. No open blockers.</text>
+  <path d="M338 629 H285 V520 H375" class="line"/>
+  <text x="68" y="584" class="label amber">REVISE</text>
+  <text x="68" y="607" class="small muted">Edit, then review again</text>
+  <path d="M782 629 H821" class="line"/>
+  <text x="841" y="615" class="label muted">LIMIT / PEER FAILURE</text>
+  <text x="841" y="642" class="body muted">degraded</text>
+  <text x="841" y="666" class="small muted">best-effort.md when available</text>
+  <path d="M560 676 V710" class="line"/>
+  <rect x="432" y="713" width="256" height="59" rx="12" fill="#163a31" stroke="#66e0ca"/>
+  <text x="560" y="750" text-anchor="middle" font-size="26" font-weight="600" class="teal">final.md</text>
+  <text x="42" y="804" class="small muted">No third LLM. No UI automation.</text>
+  <text x="1078" y="804" text-anchor="end" class="small muted">Coding: isolated peer worktrees → integration → joint review</text>
+</svg>
