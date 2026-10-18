@@ -2,6 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { mkdtempSync, copyFileSync, mkdirSync, writeFileSync, readFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
+import { randomBytes } from 'node:crypto';
 import { join } from 'node:path';
 import { loadConfig, projectRoot } from '../src/config.js';
 import { Store, id } from '../src/database/sqlite.js';
@@ -35,7 +36,8 @@ async function until(fn: () => boolean) {
 }
 class Fake implements Adapter {
   sessions = new Map<string, string>();
-  revised = false;
+  revisions = 1;
+  notReadyRounds: Record<string, number> = {};
   constructor(
     public s: Service,
     public failOnce = false,
@@ -57,6 +59,11 @@ class Fake implements Adapter {
       await call('peer_reply', { reply_to: m.id, content: 'Evidence and answer ' + m.id });
     if (c.phase === 'scope' || c.phase === 'analysis')
       await call('peer_ask', { content: i.agent + ' ' + c.phase + ' question' });
+    if (c.phase === 'discussion' && c.discussion_round < (this.notReadyRounds[i.agent] ?? 0)) {
+      if (i.agent === c.initiator)
+        await call('peer_ask', { content: 'Open point ' + randomBytes(24).toString('hex') });
+      return { summary: 'still discussing', ready_for_next_phase: false };
+    }
     if (c.phase === 'draft') {
       const a = this.s.artifacts.read(c.id);
       if (!a)
@@ -73,8 +80,8 @@ class Fake implements Adapter {
     }
     if (c.phase === 'review' || c.phase === 'integrity') {
       const a = this.s.artifacts.read(c.id);
-      const revise = !this.revised && i.agent === 'claude';
-      if (revise) this.revised = true;
+      const revise = this.revisions > 0 && i.agent === 'claude';
+      if (revise) this.revisions--;
       await call('review_submit', {
         artifact_version: a.version,
         verdict: revise ? 'REVISE' : 'APPROVE',
@@ -93,7 +100,7 @@ class Fake implements Adapter {
         await call('artifact_replace_section', {
           base_version: a.version,
           heading: '## Report improved',
-          content: 'Corrected content with caveat. '.repeat(12),
+          content: `Corrected content with caveat ${c.revision_round}. `.repeat(12),
           reason: 'review correction',
         });
       });
@@ -119,6 +126,58 @@ test('full automatic report, retry crash, resume, revise, dual approval and conv
   assert.ok(s.artifacts.read(c).version >= 3);
   assert.ok(db.all('runs', c).some((r) => r.status === 'failed'));
   assert.equal(readFileSync(s.artifacts.path(c, 'final.md'), 'utf8'), s.artifacts.read(c).content);
+});
+function report(s: Service, goal: string) {
+  return s.create({
+    goal,
+    initiator: 'claude',
+    mode: 'collaborative_report',
+    required_sections: [],
+    require_evidence: false,
+  }).id;
+}
+test('discussion ends only when both peers report ready', async () => {
+  const { config, db } = fixture();
+  const s = new Service(db, config);
+  const fake = new Fake(s);
+  fake.notReadyRounds = { claude: 3 };
+  const e = new Engine(s, { codex: fake, claude: fake });
+  const c = report(s, 'dual ready');
+  await until(() => !e.running.size);
+  assert.equal(s.collab(c).status, 'completed');
+  // The responder was ready from round 1; the initiator only from round 4.
+  assert.equal(s.collab(c).discussion_round, 4);
+});
+test('maximal discussion still leaves budget for three revision rounds', async () => {
+  const { config, db } = fixture();
+  const s = new Service(db, config);
+  const fake = new Fake(s);
+  fake.notReadyRounds = { claude: Infinity, codex: Infinity };
+  fake.revisions = 3;
+  const e = new Engine(s, { codex: fake, claude: fake });
+  const c = report(s, 'budget');
+  await until(() => !e.running.size);
+  const v = s.collab(c);
+  assert.equal(v.status, 'completed', v.last_error);
+  assert.ok(v.discussion_round >= 2);
+  assert.equal(v.revision_round, 3);
+  assert.ok(v.turns <= config.collaboration.max_total_agent_turns);
+});
+test('exhausted revisions end through best effort and integrity, not a budget crash', async () => {
+  const { config, db } = fixture();
+  const s = new Service(db, config);
+  const fake = new Fake(s);
+  fake.notReadyRounds = { claude: Infinity, codex: Infinity };
+  fake.revisions = Infinity;
+  const e = new Engine(s, { codex: fake, claude: fake });
+  const c = report(s, 'never approved');
+  await until(() => !e.running.size);
+  const v = s.collab(c);
+  assert.equal(v.status, 'degraded');
+  assert.match(v.last_error, /Final integrity review/);
+  assert.ok(db.all('runs', c).some((r) => r.phase === 'best_effort'));
+  assert.ok(v.turns <= config.collaboration.max_total_agent_turns);
+  assert.equal(s.status(c).final_path, null);
 });
 test('cancel interrupts both runtimes and prevents late tool mutations', async () => {
   const { config, db } = fixture();

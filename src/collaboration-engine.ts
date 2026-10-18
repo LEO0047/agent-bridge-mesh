@@ -11,6 +11,12 @@ import { qualityGate } from './consensus/quality-gate.js';
 import { CodexAdapter } from './adapters/codex.js';
 import { ClaudeAdapter } from './adapters/claude.js';
 import type { Adapter } from './adapters/types.js';
+// Turn costs of the phases after discussion, used to keep the shared turn budget consistent
+// with the round limits: draft (2) + synthesis (1) + review (2); best_effort (1) + integrity (2).
+const DRAFT_TO_REVIEW_TURNS = 5;
+const BEST_EFFORT_TURNS = 3;
+const RESERVED_REVISION_ROUNDS = 3;
+const revisionCycleTurns = (mode: string) => (mode === 'collaborative_coding' ? 5 : 4);
 export class Engine {
   stopping = false;
   running = new Map<string, AbortController>();
@@ -266,14 +272,27 @@ export class Engine {
           signal,
         );
         v = s.collab(c);
-        if (v.phase_step === 0) this.update(c, { phase_step: 1 });
+        if (v.phase_step === 0)
+          this.update(c, { phase_step: 1, discussion_lead_ready: !!result.ready_for_next_phase });
         else {
           const rounds = v.discussion_round + 1;
           const open = s.db.all('disagreements', c).filter((d) => d.status === 'open');
           const done =
-            rounds >= 2 && result.ready_for_next_phase && !s.bus.pending(c).length && !open.length;
+            rounds >= 2 &&
+            v.discussion_lead_ready &&
+            result.ready_for_next_phase &&
+            !s.bus.pending(c).length &&
+            !open.length;
+          // Stop discussing while the budget still covers drafting, review and reserved revisions.
+          const reserve =
+            DRAFT_TO_REVIEW_TURNS +
+            Math.min(RESERVED_REVISION_ROUNDS, s.config.collaboration.max_revision_rounds) *
+              revisionCycleTurns(v.mode) +
+            BEST_EFFORT_TURNS;
           const limit =
-            rounds >= s.config.collaboration.max_discussion_rounds || v.no_progress >= 4;
+            rounds >= s.config.collaboration.max_discussion_rounds ||
+            v.no_progress >= 4 ||
+            v.turns + 2 + reserve > s.config.collaboration.max_total_agent_turns;
           this.update(c, {
             phase: done || limit ? 'draft' : 'discussion',
             phase_step: 0,
@@ -351,9 +370,12 @@ export class Engine {
             );
             return;
           }
+          const cycleFits =
+            v.turns + revisionCycleTurns(v.mode) + BEST_EFFORT_TURNS <=
+            s.config.collaboration.max_total_agent_turns;
           this.update(c, {
             phase:
-              v.revision_round >= s.config.collaboration.max_revision_rounds
+              v.revision_round >= s.config.collaboration.max_revision_rounds || !cycleFits
                 ? 'best_effort'
                 : 'revision',
             phase_step: 0,

@@ -2,7 +2,7 @@ collaboration:
   autonomous: true
   max_discussion_rounds: 8
   max_revision_rounds: 5
-  max_total_agent_turns: 30
+  max_total_agent_turns: 40
   max_duplicate_messages: 2
   require_dual_approval: true
   unresolved_disagreement:
