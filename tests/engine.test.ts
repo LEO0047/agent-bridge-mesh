@@ -4,7 +4,8 @@ import { mkdtempSync, copyFileSync, mkdirSync, writeFileSync, readFileSync } fro
 import { tmpdir } from 'node:os';
 import { randomBytes } from 'node:crypto';
 import { join } from 'node:path';
-import { loadConfig, projectRoot } from '../src/config.js';
+import { loadConfig, projectRoot, sessionTimeouts } from '../src/config.js';
+import { skillMarkdown } from '../src/skill.js';
 import { Store, id } from '../src/database/sqlite.js';
 import { Service } from '../src/service.js';
 import { Engine } from '../src/collaboration-engine.js';
@@ -224,6 +225,88 @@ test('timeout retries are bounded and do not fake final approval', async () => {
   assert.equal(s.collab(c).status, 'degraded');
   assert.equal(db.all('runs', c).length, 4);
   assert.equal(s.status(c).final_path, null);
+  // The retry prompt carries last_error, so the timeout must be named there.
+  assert.ok(db.all('runs', c).every((r) => /^Turn timed out after 0s/.test(r.error)));
+});
+test('coding mode uses its own turn and collaboration time limits', () => {
+  const { config } = fixture();
+  const {
+    coding_agent_timeout_ms: _a,
+    coding_collaboration_timeout_ms: _c,
+    ...reportOnly
+  } = config.sessions;
+  const sessions = { ...reportOnly, agent_timeout_ms: 1000, collaboration_timeout_ms: 2000 };
+  const coding = {
+    ...sessions,
+    coding_agent_timeout_ms: 3000,
+    coding_collaboration_timeout_ms: 4000,
+  };
+  assert.deepEqual(sessionTimeouts(coding, 'collaborative_report'), {
+    agent_ms: 1000,
+    collaboration_ms: 2000,
+  });
+  assert.deepEqual(sessionTimeouts(coding, 'collaborative_coding'), {
+    agent_ms: 3000,
+    collaboration_ms: 4000,
+  });
+  assert.deepEqual(sessionTimeouts(sessions, 'collaborative_coding'), {
+    agent_ms: 1000,
+    collaboration_ms: 2000,
+  });
+  assert.ok(config.sessions.coding_agent_timeout_ms! > config.sessions.agent_timeout_ms);
+});
+test('a coding turn longer than the report limit is not cut off', async () => {
+  const { root, config, db } = fixture();
+  config.sessions.agent_timeout_ms = 20;
+  config.sessions.coding_agent_timeout_ms = 5000;
+  config.sessions.max_retries = 0;
+  const repo = join(root, 'repo');
+  mkdirSync(repo);
+  git(repo, ['init']);
+  git(repo, ['config', 'user.name', 'Bridge Test']);
+  git(repo, ['config', 'user.email', 'test@example.invalid']);
+  writeFileSync(join(repo, 'index.js'), 'export const value=1;\n');
+  git(repo, ['add', '.']);
+  git(repo, ['commit', '-m', 'initial']);
+  const s = new Service(db, config);
+  // Outlives the 20 ms report limit, then ends the run with a recognisable error.
+  const slow: Adapter = {
+    turn: async (i) => {
+      await new Promise((r) => setTimeout(r, 80));
+      throw Error(i.signal.aborted ? 'aborted early' : 'slow turn finished');
+    },
+  };
+  const e = new Engine(s, { codex: slow, claude: slow });
+  const c = s.create({
+    goal: 'long coding turn',
+    initiator: 'claude',
+    mode: 'collaborative_coding',
+    repository: repo,
+    required_sections: [],
+    require_evidence: false,
+  }).id;
+  await until(() => !e.running.size);
+  const first = db.all('runs', c)[0];
+  assert.match(first.error, /slow turn finished/);
+  assert.equal(s.collab(c).status, 'degraded');
+});
+test('installed skill states worker limits before the goal is split', () => {
+  const md = skillMarkdown('/bin/agent-bridge', 'claude');
+  const front = md.split('---')[1].trim().split('\n');
+  assert.deepEqual(
+    front.map((l) => l.split(':')[0]),
+    ['name', 'description'],
+  );
+  for (const phrase of [
+    'cannot read local files or images',
+    'read-only sandbox',
+    'image generation',
+    'binary exports (PNG, GLB)',
+    'Queued means the daemon restarted',
+    '`/bin/agent-bridge start`',
+    '--initiator claude',
+  ])
+    assert.ok(md.includes(phrase), phrase);
 });
 test('separate worktrees, merge conflict detection and sandboxed coding test', async () => {
   const { root } = fixture();

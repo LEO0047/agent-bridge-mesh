@@ -4,6 +4,7 @@ import { randomBytes } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { Service, TestRuns } from './service.js';
+import { sessionTimeouts } from './config.js';
 import { id, now, hash } from './database/sqlite.js';
 import { peer, type Agent } from './messaging/protocol.js';
 import { runTests } from './tasks/test-runner.js';
@@ -125,7 +126,12 @@ export class Engine {
         controller = new AbortController();
       const abort = () => controller.abort();
       signal.addEventListener('abort', abort, { once: true });
-      const timer = setTimeout(abort, s.config.sessions.agent_timeout_ms);
+      const limitMs = sessionTimeouts(s.config.sessions, v.mode).agent_ms;
+      let timedOut = false;
+      const timer = setTimeout(() => {
+        timedOut = true;
+        abort();
+      }, limitMs);
       s.db.put('runs', {
         id: runId,
         collaboration_id: c,
@@ -202,15 +208,20 @@ export class Engine {
         });
         return result;
       } catch (e) {
+        // The retry prompt shows last_error, so a timeout tells the agent to wrap up sooner.
+        const error =
+          timedOut && !signal.aborted
+            ? `Turn timed out after ${Math.round(limitMs / 1000)}s; work already written is kept (${e})`
+            : String(e);
         s.db.put('runs', {
           ...s.db.get('runs', runId),
           id: runId,
           status: signal.aborted ? 'cancelled' : 'failed',
-          error: String(e),
+          error,
           ended_at: now(),
         });
-        s.db.event(c, 'agent.failed', { agent, retry, error: String(e) });
-        this.update(c, { last_error: String(e) });
+        s.db.event(c, 'agent.failed', { agent, retry, error });
+        this.update(c, { last_error: error });
         if (signal.aborted || retry === s.config.sessions.max_retries) throw e;
       } finally {
         clearTimeout(timer);
@@ -226,7 +237,10 @@ export class Engine {
     this.update(c, { status: 'running' });
     while (!signal.aborted) {
       let v = s.collab(c);
-      if (Date.now() - Date.parse(v.created_at) > s.config.sessions.collaboration_timeout_ms)
+      if (
+        Date.now() - Date.parse(v.created_at) >
+        sessionTimeouts(s.config.sessions, v.mode).collaboration_ms
+      )
         throw Error('Collaboration timeout');
       const synth = v.synthesizer as Agent,
         challenger = peer(synth);

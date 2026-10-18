@@ -108,6 +108,8 @@ Requires a clean committed repository. Bridge creates Codex, Claude and integrat
 
 Tests run in a macOS Seatbelt sandbox with signals limited to the same sandbox, no network, no credential environment, and reads/writes scoped to runtime/system files and the selected worktree. Default: `node --test`; MCP callers can supply a pre-authorized `test_command` when creating the collaboration. The candidate is the integrated commit plus draft version; reviews refer to both. Worktrees are retained for inspection and deliberate adoption. No push, production deployment or destructive cleanup occurs automatically.
 
+Coding turns implement whole features, so they use `sessions.coding_agent_timeout_ms` (default 30 minutes per turn) and `sessions.coding_collaboration_timeout_ms` (4 hours) instead of the report limits. A timed-out turn keeps everything it already wrote, and the retry is told it timed out.
+
 ## Controls and observability
 
 ```sh
@@ -133,6 +135,8 @@ Worker capabilities are bound to the current run, agent and collaboration. They 
 ## Safety and operating boundaries
 
 Bridge does not expose unrestricted shell, deployment, payment, billing, external messaging, secret-reading or bulk-delete tools. Peer delegation cannot grant those capabilities. High-risk work must leave the autonomous flow for explicit human authorization in the host environment.
+
+Workers produce text, research and code only: they cannot generate images, open a browser, take screenshots, write binary files such as PNG or GLB, or push. The Claude worker also cannot read local files, so it never sees a local reference image unless the goal describes it. The initiating agent keeps that share and does it in its own session after the run; the installed `agent-bridge` skill tells it to split the goal this way before starting.
 
 The local operating-system user is trusted and owns the files/token; this is not a multi-user hosted security boundary. Do not expose the socket or token over a network. Provider/tool outputs and repository contents remain untrusted input. Budget limits include turns, rounds, retries and wall-clock deadlines, not a guarantee of a particular monetary charge under every subscription.
 

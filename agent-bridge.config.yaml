@@ -11,6 +11,8 @@ sessions:
   persistent: true
   agent_timeout_ms: 600000
   collaboration_timeout_ms: 7200000
+  coding_agent_timeout_ms: 1800000
+  coding_collaboration_timeout_ms: 14400000
   max_retries: 2
 artifacts:
   versioning: true

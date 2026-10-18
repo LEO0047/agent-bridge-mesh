@@ -19,6 +19,9 @@ const settings = z.object({
     persistent: z.literal(true),
     agent_timeout_ms: z.number().min(1000),
     collaboration_timeout_ms: z.number().min(1000),
+    // Coding turns implement whole features in a worktree; they fall back to the report limits.
+    coding_agent_timeout_ms: z.number().min(1000).optional(),
+    coding_collaboration_timeout_ms: z.number().min(1000).optional(),
     max_retries: z.number().int().min(0).max(5),
   }),
   artifacts: z.object({ versioning: z.literal(true), optimistic_locking: z.literal(true) }),
@@ -62,3 +65,11 @@ export function loadConfig(root = process.env.AGENT_BRIDGE_ROOT || projectRoot) 
   };
 }
 export type Config = ReturnType<typeof loadConfig>;
+export function sessionTimeouts(sessions: Config['sessions'], mode: string) {
+  const coding = mode === 'collaborative_coding';
+  return {
+    agent_ms: (coding && sessions.coding_agent_timeout_ms) || sessions.agent_timeout_ms,
+    collaboration_ms:
+      (coding && sessions.coding_collaboration_timeout_ms) || sessions.collaboration_timeout_ms,
+  };
+}
