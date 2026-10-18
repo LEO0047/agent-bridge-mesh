@@ -47,6 +47,8 @@ agent-bridge new --initiator claude --mode collaborative_coding \
 
 預設測試為 `node --test`。MCP 的 `collaboration_start` 可指定預先授權的 `test_command`。若專案測試需要依賴，應先在工作樹準備好；沙箱測試不能聯網下載，也不繼承 API key。Bridge 本身的自我協作驗收由主協作者預先複製已安裝的依賴，並限定測試命令。
 
+程式協作的每一輪通常要實作整個功能，所以使用 `sessions.coding_agent_timeout_ms`（預設每輪 30 分鐘）與 `sessions.coding_collaboration_timeout_ms`（預設 4 小時），不套用報告模式的時限。逾時的那一輪已寫入的內容會保留，重試時 Agent 會被告知上一輪逾時。
+
 ## 看進度、對話與恢復
 
 ```sh
@@ -76,5 +78,6 @@ agent-bridge cancel <id>
 - 近似重複訊息偵測使用字元 trigram，加上狀態進展與輪數上限，沒有宣稱理解所有語意同義句。
 - 本機 OS 使用者是信任邊界。不要把 socket、token 或原始紀錄公開到網路。
 - 付款、部署、對外發信、未授權秘密讀取與破壞性操作不在 worker 工具內，不能透過請另一位 Agent 代做來繞過。
+- Worker 只產出文字、研究與程式碼：不能生圖、開瀏覽器、截圖、寫入 PNG／GLB 等二進位檔，也不能 push。Claude worker 不能讀本機檔案，看不到本機參考圖，除非目標裡有文字描述。這些工作由發起的 Agent 在協作結束後於自己的 session 完成；已安裝的 `agent-bridge` skill 會要求它開工前先這樣拆分目標。
 
 實測紀錄與最終報告見 [驗收報告](ACCEPTANCE.md)。
